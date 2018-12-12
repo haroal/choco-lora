@@ -1,0 +1,271 @@
+[
+    {
+        "id": "4c0d676e.9c66d",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "9e975069.211e9",
+        "type": "ttn uplink",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN Chocolora Uplinks",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "field": "",
+        "x": 200,
+        "y": 160,
+        "wires": [
+            [
+                "96f1b4bc.bf863",
+                "7d50bfc8.e5362",
+                "bfb0b898.79389",
+                "a07dd4c6.01dba8"
+            ]
+        ]
+    },
+    {
+        "id": "96f1b4bc.bf863",
+        "type": "debug",
+        "z": "4c0d676e.9c66d",
+        "name": "Uplinks",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 460,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "152f3c1a.3fb104",
+        "type": "ttn event",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN Chocolora Events",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "event": "#",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "f50717e9.42eee8"
+            ]
+        ]
+    },
+    {
+        "id": "f50717e9.42eee8",
+        "type": "debug",
+        "z": "4c0d676e.9c66d",
+        "name": "Events",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 450,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "54a4d58b.8fcad4",
+        "type": "ttn downlink",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN chocolora downlinks",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "port": "",
+        "confirmed": false,
+        "schedule": "replace",
+        "x": 710,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "7d50bfc8.e5362",
+        "type": "function",
+        "z": "4c0d676e.9c66d",
+        "name": "Format ouput",
+        "func": "return {\n  dev_id: msg.dev_id,\n  port: msg.port,\n  payload: msg.payload\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 480,
+        "y": 380,
+        "wires": [
+            [
+                "4a887c08.050e1c",
+                "54a4d58b.8fcad4"
+            ]
+        ]
+    },
+    {
+        "id": "4a887c08.050e1c",
+        "type": "debug",
+        "z": "4c0d676e.9c66d",
+        "name": "Outputs",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 660,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "421b543a.731b04",
+        "type": "influxdb out",
+        "z": "4c0d676e.9c66d",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "InfluxDB messages",
+        "measurement": "messages",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 810,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "bfb0b898.79389",
+        "type": "function",
+        "z": "4c0d676e.9c66d",
+        "name": "Format to save",
+        "func": "return {\n    payload: [\n        {\n            text: msg.payload.toString('utf8'),\n        },\n        {\n            sender_dev_id: msg.dev_id,\n            receiver_dev_id: msg.dev_id\n        }\n    ]\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 480,
+        "y": 80,
+        "wires": [
+            [
+                "d575f7ec.a90298",
+                "421b543a.731b04"
+            ]
+        ]
+    },
+    {
+        "id": "d575f7ec.a90298",
+        "type": "debug",
+        "z": "4c0d676e.9c66d",
+        "name": "Savings",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 780,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "a07dd4c6.01dba8",
+        "type": "influxdb in",
+        "z": "4c0d676e.9c66d",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get messages InfluxDB",
+        "query": "SELECT sender_dev_id, receiver_dev_id, text FROM messages",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 450,
+        "y": 580,
+        "wires": [
+            [
+                "e29f87e7.36f7e8",
+                "6c12a4ff.51e534"
+            ]
+        ]
+    },
+    {
+        "id": "e29f87e7.36f7e8",
+        "type": "debug",
+        "z": "4c0d676e.9c66d",
+        "name": "Display saved messages",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 930,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "6c12a4ff.51e534",
+        "type": "ui_template",
+        "z": "4c0d676e.9c66d",
+        "group": "81bf9558.ba1688",
+        "name": "",
+        "order": 0,
+        "width": "12",
+        "height": "12",
+        "format": "<ul>\n    <li ng-repeat=\"message in msg.payload\">\n       {{message.sender_dev_id}} sent {{message.text}} to {{message.receiver_dev_id}} at {{message.time | date:'yyyy-MM-dd HH:mm:ss'}}\n    </li>\n</ul>",
+        "storeOutMessages": true,
+        "fwdInMessages": false,
+        "templateScope": "local",
+        "x": 700,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "738d6c4.b222214",
+        "type": "inject",
+        "z": "4c0d676e.9c66d",
+        "name": "TEST update",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 210,
+        "y": 580,
+        "wires": [
+            [
+                "a07dd4c6.01dba8"
+            ]
+        ]
+    },
+    {
+        "id": "e77f0112.1f955",
+        "type": "ttn app",
+        "z": "",
+        "appId": "chocolora",
+        "accessKey": "ttn-account-v2.gL12jiQzXwiC77fpHNZZWCwBf0tP0B1kd9bv6XPHbCs",
+        "discovery": "discovery.thethingsnetwork.org:1900"
+    },
+    {
+        "id": "8dc7fb3a.0f1048",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "chocolora",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    },
+    {
+        "id": "81bf9558.ba1688",
+        "type": "ui_group",
+        "z": "",
+        "name": "Messages échangés",
+        "tab": "5b640ca1.1d16f4",
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "5b640ca1.1d16f4",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Choco-LoRa",
+        "icon": "dashboard",
+        "order": 1
+    }
+]
