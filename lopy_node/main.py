@@ -38,6 +38,9 @@ s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 # set the LoRaWAN data rate
 s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
 
+# set acquittement
+s.setsockopt(socket.SOL_LORA, socket.SO_CONFIRMED, True)
+
 # make the socket non-blocking
 s.setblocking(False)
 
@@ -47,8 +50,8 @@ to_send = []
 
 def write_lora():
     while True:
-        rlist, wliste, elist = select.select([], [s], [], 0.05)
-        if len(wliste) !=0:
+        rliste, wliste, elist = select.select([], [s], [], 0.05)
+        if len(wliste) != 0:
             with mutex:
                 if len(to_send) != 0:
                     s.send(bytes(to_send[0]))
@@ -57,20 +60,39 @@ def write_lora():
 
 _thread.start_new_thread(write_lora, to_send)
 
+rx_data = []
+
+bluetooth = Bluetooth()
+bluetooth.set_advertisement(name='LoPy', service_uuid=b'1234567890123456')
+
+srv1 = bluetooth.service(uuid=b'1234567890123456', nbr_chars = 2, isprimary=True)
+
+chr1 = srv1.characteristic(uuid=b'ab34567890123456', properties=Bluetooth.PROP_WRITE)
+chr2 = srv1.characteristic(uuid=b'cd34567890123456', properties=Bluetooth.PROP_NOTIFY)
+
+def read_lora():
+    while True:
+        rliste, wliste, elist = select.select([s], [], [], 0.05)
+        if len(rliste) != 0:
+            rx_data = s.recv(256)
+            print("recu {}".format(rx_data))
+            chr2.value(rx_data)
+
+_thread.start_new_thread(read_lora, rx_data)
+
 def lora_cb(lora):
     events = lora.events()
     if events & LoRa.RX_PACKET_EVENT:
-        rx_data = s.recv(256)
-        print("recu {}".format(rx_data))
+        print("received")
         stats = lora.stats()
     if events & LoRa.TX_PACKET_EVENT:
         print("sent")
+    if events & LoRa.TX_FAILED_EVENT:
+        print("failed")
 
 lora.callback(trigger=(LoRa.RX_PACKET_EVENT | LoRa.TX_PACKET_EVENT), handler=lora_cb)
 
 
-bluetooth = Bluetooth()
-bluetooth.set_advertisement(name='LoPy', service_uuid=b'1234567890123456')
 
 def conn_cb (bt_o):
     events = bt_o.events()
@@ -85,9 +107,7 @@ bluetooth.advertise(True)
 
 ### code
 
-srv1 = bluetooth.service(uuid=b'1234567890123456', isprimary=True)
 
-chr1 = srv1.characteristic(uuid=b'ab34567890123456', value=5)
 
 def char1_cb_handler(chr):
     #global s
