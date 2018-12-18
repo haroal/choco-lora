@@ -11,6 +11,7 @@ import select
 #from fonctions_ble import *
 
 MAGIC_CODE = b'\xca\xfe'
+TAILLE_MSG_BLE = 20
 
 # Initialize LoRa in LORAWAN mode.
 lora = LoRa(mode=LoRa.LORAWAN)
@@ -51,26 +52,32 @@ s.setblocking(False)
 
 to_send = []
 rx_data = []
+poll_again = True
+message_sent_to_lora = False
 
-def polling(arg):
-    #while True:
+def polling(*arg):
+    global message_sent_to_lora
     rliste, wliste, elist = select.select([], [s], [], 0.05)
     if len(wliste) != 0:
-        #with mutex_poll:
+    #with mutex_poll:
         s.send(b'\x01')
+        message_sent_to_lora = False
         print("sent poll")
+
     #time.sleep(30)
 
 alarme = Timer.Alarm(handler = polling, s = 30.0, periodic = True)
 
 def write_lora():
-    global alarme
+    global alarme, poll_again, message_sent_to_lora
     while True:
         rliste, wliste, elist = select.select([], [s], [], 0.05)
         if len(wliste) != 0 and len(to_send) != 0:
             with mutex:
+                poll_again = False
                 alarme.cancel()
                 s.send(bytes(to_send[0]))
+                message_sent_to_lora = True
                 print("sent = {}".format(to_send[0]))
                 del to_send[0]
                 alarme = Timer.Alarm(handler = polling, s = 30.0, periodic = True)
@@ -81,7 +88,14 @@ def read_lora():
         if len(rliste) != 0:
             rx_data = s.recv(256)
             print("recu {}".format(rx_data))
-            chr2.value(rx_data)
+            rx_data = MAGIC_CODE + bytes([len(rx_data)]) + rx_data
+            print("to send to phone = {}".format(rx_data))
+            while len(rx_data) > TAILLE_MSG_BLE:
+                chr2.value(rx_data[:20])
+                rx_data = rx_data[20:]
+                #time.sleep(0.5)
+            if len(rx_data) <= TAILLE_MSG_BLE:
+                chr2.value(rx_data)
 
 
 
@@ -105,13 +119,21 @@ chr1 = srv1.characteristic(uuid=b'ab34567890123456', properties=Bluetooth.PROP_W
 chr2 = srv1.characteristic(uuid=b'cd34567890123456', properties=Bluetooth.PROP_NOTIFY)
 
 def lora_cb(lora):
+    global poll_again, message_sent_to_lora
     events = lora.events()
     if events & LoRa.RX_PACKET_EVENT:
         print("received from lora")
         stats = lora.stats()
+        if poll_again:
+            polling()
     if events & LoRa.TX_PACKET_EVENT:
         print("sent to lora")
-        chr1.value(bytes([True]))
+        if message_sent_to_lora:
+            chr1.value(bytes([True]))
+        #else:
+        #    chr1.value(bytes([False]))
+        poll_again = True
+        message_sent_to_lora = False
     if events & LoRa.TX_FAILED_EVENT:
         print("failed to lora")
 
