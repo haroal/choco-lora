@@ -1,48 +1,91 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, Image, View } from 'react-native'
-import { Images } from '../Themes'
-import { BleManager } from 'react-native-ble-plx'
+import { Text, ScrollView, View } from 'react-native'
+import connect from 'react-redux/es/connect/connect'
+import { State as ControllerState } from 'react-native-ble-plx'
+import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 
-export default class LaunchScreen extends Component {
-  constructor(props){
+class LaunchScreen extends Component {
+  constructor (props) {
     super(props)
 
-    this.state = {
-      btState: null
-    }
+    this.displayConnectionButton = this.displayConnectionButton.bind(this)
+    this.onConnectPressed = this.onConnectPressed.bind(this)
+    this.onDisconnectPressed = this.onDisconnectPressed.bind(this)
   }
 
-  async componentDidMount() {
-    const bleManager = new BleManager()
-    const state = await bleManager.state()
+  async onConnectPressed () {
+    if (this.props.controllerState !== ControllerState.PoweredOn) {
+      await this.props.bleManager.enable()
+    }
+    this.props.navigation.navigate('ConnectionScreen')
+  }
 
-    this.setState({
-      btState: state
-    })
+  onDisconnectPressed () {
+    this.props.disconnect()
+  }
+
+  displayConnectionButton () {
+    if (this.props.bluetoothState === BluetoothState.Connected) {
+      return (
+        <View style={{alignItems: 'center'}}>
+          <Text style={styles.nameDeviceConnected}>Connecté à {this.props.connectedDevice.id}</Text>
+          <View style={styles.btDisconnectButton}>
+            <Icon.Button name={'bluetooth'} size={20} onPress={this.onDisconnectPressed} iconStyle={styles.btButtonIcon}>
+              Se déconnecter
+            </Icon.Button>
+          </View>
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.btConnectButton}>
+          <Icon.Button name={'bluetooth'} size={20} onPress={this.onConnectPressed} iconStyle={styles.btButtonIcon}>
+            Se connecter
+          </Icon.Button>
+        </View>
+      )
+    }
   }
 
   render () {
     return (
-      <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
-        <ScrollView style={styles.container}>
-          <View style={styles.centered}>
-            <Image source={Images.launch} style={styles.logo} />
-          </View>
+      <ScrollView contentContainerStyle={styles.mainContainer}>
 
-          <View style={styles.section} >
-            <Image source={Images.ready} />
-            <Text style={styles.sectionText}>
-              Bluetooth state: {this.state.btState}.
-              This probably isn't what your app is going to look like. Unless your designer handed you this screen and, in that case, congrats! You're ready to ship. For everyone else, this is where you'll see a live preview of your fully functioning app using Ignite.
+        <Text style={styles.AppTitleStyle}>Choco-lora</Text>
+
+        {this.displayConnectionButton()}
+
+        {this.props.values !== null &&
+          <View style={{alignItems: 'center'}}>
+            <Text style={styles.digitStyle}>
+              {this.props.lastValue}
             </Text>
+            <Text style={styles.littleDigitStyle}> mV </Text>
           </View>
+        }
 
-        </ScrollView>
-      </View>
+        <Text style={styles.authors}> By Alexis A., Clément P. and Benoit C.G. </Text>
+
+      </ScrollView>
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  bleManager: BluetoothSelectors.getManager(state),
+  controllerState: BluetoothSelectors.getControllerState(state),
+  bluetoothState: BluetoothSelectors.getBluetoothState(state),
+  connectedDevice: BluetoothSelectors.getConnectedDevice(state),
+  lastValue: BluetoothSelectors.getLastValue(state),
+  values: BluetoothSelectors.getValues(state)
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  disconnect: () => dispatch(BluetoothActions.disconnect())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(LaunchScreen)

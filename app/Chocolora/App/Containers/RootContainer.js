@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
-import { View, StatusBar } from 'react-native'
+import { Alert, View, StatusBar, ActivityIndicator } from 'react-native'
 import ReduxNavigation from '../Navigation/ReduxNavigation'
 import { connect } from 'react-redux'
-import StartupActions from '../Redux/StartupRedux'
+import BluetoothActions, { BluetoothSelectors } from '../Redux/BluetoothRedux'
+import { LoadingSelectors } from '../Redux/LoadingRedux'
 
 // Styles
 import styles from './Styles/RootContainerStyles'
 
 class RootContainer extends Component {
   componentDidMount () {
-    this.props.startup()
+    this.props.initBluetooth()
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.error === null && this.props.error !== null) {
+      Alert.alert('Erreur', 'Une erreur est survenue: ' + this.props.error)
+    }
   }
 
   render () {
@@ -17,14 +24,25 @@ class RootContainer extends Component {
       <View style={styles.applicationView}>
         <StatusBar barStyle='light-content' />
         <ReduxNavigation />
+
+        {this.props.isLoading &&
+          <View style={styles.loader}>
+            <ActivityIndicator size='large' />
+          </View>
+        }
+
       </View>
     )
   }
 }
 
-// wraps dispatch to create nicer functions to call within our component
-const mapDispatchToProps = (dispatch) => ({
-  startup: () => dispatch(StartupActions.startup())
+const mapStateToProps = (state) => ({
+  error: BluetoothSelectors.getError(state),
+  isLoading: LoadingSelectors.isLoading(state)
 })
 
-export default connect(null, mapDispatchToProps)(RootContainer)
+const mapDispatchToProps = (dispatch) => ({
+  initBluetooth: () => dispatch(BluetoothActions.init())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(RootContainer)
