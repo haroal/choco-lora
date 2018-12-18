@@ -1,11 +1,16 @@
 from network import Bluetooth
 from network import LoRa
+from machine import Timer
 import socket
 import ubinascii
 import struct
 import time
 import _thread
 import select
+#from fonctions_lora import *
+#from fonctions_ble import *
+
+MAGIC_CODE = b'\xca\xfe'
 
 # Initialize LoRa in LORAWAN mode.
 lora = LoRa(mode=LoRa.LORAWAN)
@@ -44,31 +49,31 @@ s.setsockopt(socket.SOL_LORA, socket.SO_CONFIRMED, True)
 # make the socket non-blocking
 s.setblocking(False)
 
-# mutex to protec variable to_send
-mutex = _thread.allocate_lock()
 to_send = []
-
-def write_lora():
-    while True:
-        rliste, wliste, elist = select.select([], [s], [], 0.05)
-        if len(wliste) != 0:
-            with mutex:
-                if len(to_send) != 0:
-                    s.send(bytes(to_send[0]))
-                    print("sent = {}".format(to_send[0]))
-                    del to_send[0]
-
-_thread.start_new_thread(write_lora, to_send)
-
 rx_data = []
 
-bluetooth = Bluetooth()
-bluetooth.set_advertisement(name='LoPy', service_uuid=b'1234567890123456')
+def polling(arg):
+    #while True:
+    rliste, wliste, elist = select.select([], [s], [], 0.05)
+    if len(wliste) != 0:
+        #with mutex_poll:
+        s.send(b'\x01')
+        print("sent poll")
+    #time.sleep(30)
 
-srv1 = bluetooth.service(uuid=b'1234567890123456', nbr_chars = 2, isprimary=True)
+alarme = Timer.Alarm(handler = polling, s = 30.0, periodic = True)
 
-chr1 = srv1.characteristic(uuid=b'ab34567890123456', properties=Bluetooth.PROP_WRITE)
-chr2 = srv1.characteristic(uuid=b'cd34567890123456', properties=Bluetooth.PROP_NOTIFY)
+def write_lora():
+    global alarme
+    while True:
+        rliste, wliste, elist = select.select([], [s], [], 0.05)
+        if len(wliste) != 0 and len(to_send) != 0:
+            with mutex:
+                alarme.cancel()
+                s.send(bytes(to_send[0]))
+                print("sent = {}".format(to_send[0]))
+                del to_send[0]
+                alarme = Timer.Alarm(handler = polling, s = 30.0, periodic = True)
 
 def read_lora():
     while True:
@@ -78,21 +83,37 @@ def read_lora():
             print("recu {}".format(rx_data))
             chr2.value(rx_data)
 
+
+
+# Debut des threads de lecture et ecriture lora
+mutex = _thread.allocate_lock()
+#mutex_poll = _thread.allocate_lock()
+_thread.start_new_thread(write_lora, to_send)
 _thread.start_new_thread(read_lora, rx_data)
+#_thread.start_new_thread(polling, ())
+
+
+
+# Initialisation du bluetooth
+bluetooth = Bluetooth()
+bluetooth.set_advertisement(name='LoPy', service_uuid=b'1234567890123456')
+bluetooth.advertise(True)
+
+# Definition du service et des caracteristiques
+srv1 = bluetooth.service(uuid=b'1234567890123456', nbr_chars = 2, isprimary=True)
+chr1 = srv1.characteristic(uuid=b'ab34567890123456', properties=Bluetooth.PROP_WRITE | Bluetooth.PROP_NOTIFY)
+chr2 = srv1.characteristic(uuid=b'cd34567890123456', properties=Bluetooth.PROP_NOTIFY)
 
 def lora_cb(lora):
     events = lora.events()
     if events & LoRa.RX_PACKET_EVENT:
-        print("received")
+        print("received from lora")
         stats = lora.stats()
     if events & LoRa.TX_PACKET_EVENT:
-        print("sent")
+        print("sent to lora")
+        chr1.value(bytes([True]))
     if events & LoRa.TX_FAILED_EVENT:
-        print("failed")
-
-lora.callback(trigger=(LoRa.RX_PACKET_EVENT | LoRa.TX_PACKET_EVENT), handler=lora_cb)
-
-
+        print("failed to lora")
 
 def conn_cb (bt_o):
     events = bt_o.events()
@@ -101,25 +122,45 @@ def conn_cb (bt_o):
     elif events & Bluetooth.CLIENT_DISCONNECTED:
         print("Client disconnected")
 
-bluetooth.callback(trigger=Bluetooth.CLIENT_CONNECTED | Bluetooth.CLIENT_DISCONNECTED, handler=conn_cb)
-
-bluetooth.advertise(True)
-
-### code
-
-
+msg = b''
+cpt = 0
+length_totale = 0
 
 def char1_cb_handler(chr):
     #global s
-    global to_send
+    global to_send, msg, cpt, length_totale
     events = chr.events()
+
 
     if events & Bluetooth.CHAR_WRITE_EVENT:
         print("Write request with value = {}".format(chr.value()))
-        with mutex:
-            to_send = to_send + [chr.value()]
-        print("to_send = {}".format(to_send))
+        if chr.value()[:2] == MAGIC_CODE:
+            #print("magic code ok")
+            length_totale = chr.value()[2]
+            #print(length_totale)
+            msg = chr.value()[3:]
+            #print(msg)
+            cpt = len(msg)
+            #print(cpt)
+
+        else:
+            while cpt + len(chr.value()) <= length_totale:
+                #print("ok")
+                #print("cpt = {}".format(cpt))
+                cpt = cpt + len(chr.value())
+                msg = msg + chr.value()
+        if cpt == length_totale:
+            with mutex:
+                to_send = to_send + [msg]
+            print("to_send = {}".format(to_send))
+            msg = b''
+            length_totale = 0
+            cpt = 0
 
     return(chr.value)
+
+lora.callback(trigger=(LoRa.RX_PACKET_EVENT | LoRa.TX_PACKET_EVENT), handler=lora_cb)
+
+bluetooth.callback(trigger=Bluetooth.CLIENT_CONNECTED | Bluetooth.CLIENT_DISCONNECTED, handler=conn_cb)
 
 char1_cb = chr1.callback(trigger=Bluetooth.CHAR_WRITE_EVENT, handler=char1_cb_handler)
