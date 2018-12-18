@@ -1,0 +1,5 @@
+Name = "LoPy"
+
+servcice 1 : 1234567890123456
+characteristique1 : ab34567890123456 WRITE et NOTIFY
+characteristique2 : cd34567890123456 NOTIFY
