@@ -1,0 +1,5 @@
+Name = "LoPy"
+
+servcice 1 : a65d3800-99f5-4e5e-85ab-fdd531c0aafa
+characteristique1 : a65d3801-99f5-4e5e-85ab-fdd531c0aafa WRITE et NOTIFY
+characteristique2 : a65d3802-99f5-4e5e-85ab-fdd531c0aafa NOTIFY

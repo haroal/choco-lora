@@ -10,6 +10,15 @@ import select
 #from fonctions_lora import *
 #from fonctions_ble import *
 
+def uuid2bytes(uuid):
+    uuid = uuid.encode().replace(b'-',b'')
+    tmp = ubinascii.unhexlify(uuid)
+    return bytes(reversed(tmp))
+
+service1_uuid = uuid2bytes("a65d3800-99f5-4e5e-85ab-fdd531c0aafa")
+char1_uuid = uuid2bytes("a65d3801-99f5-4e5e-85ab-fdd531c0aafa")
+char2_uuid = uuid2bytes("a65d3802-99f5-4e5e-85ab-fdd531c0aafa")
+
 MAGIC_CODE = b'\xca\xfe'
 TAILLE_MSG_BLE = 20
 
@@ -110,13 +119,13 @@ _thread.start_new_thread(read_lora, rx_data)
 
 # Initialisation du bluetooth
 bluetooth = Bluetooth()
-bluetooth.set_advertisement(name='LoPy', service_uuid=b'1234567890123456')
+bluetooth.set_advertisement(name='LoPy', service_uuid=service1_uuid)
 bluetooth.advertise(True)
 
 # Definition du service et des caracteristiques
-srv1 = bluetooth.service(uuid=b'1234567890123456', nbr_chars = 2, isprimary=True)
-chr1 = srv1.characteristic(uuid=b'ab34567890123456', properties=Bluetooth.PROP_WRITE | Bluetooth.PROP_NOTIFY)
-chr2 = srv1.characteristic(uuid=b'cd34567890123456', properties=Bluetooth.PROP_NOTIFY)
+srv1 = bluetooth.service(uuid=service1_uuid, nbr_chars = 2, isprimary=True)
+chr1 = srv1.characteristic(uuid=char1_uuid, properties=Bluetooth.PROP_WRITE | Bluetooth.PROP_NOTIFY)
+chr2 = srv1.characteristic(uuid=char2_uuid, properties=Bluetooth.PROP_NOTIFY)
 
 def lora_cb(lora):
     global poll_again, message_sent_to_lora
