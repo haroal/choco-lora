@@ -6,7 +6,7 @@ import { BluetoothTypes } from '../Redux/BluetoothRedux'
 
 /* ------------- Sagas ------------- */
 
-import { connectDevice, disconnectDevice, initBluetooth, receiveNotification, scanDevices } from './BluetoothSagas'
+import { connectDevice, disconnectDevice, initBluetooth, receiveNotification, scanDevices, writeMessage } from './BluetoothSagas'
 
 /* ------------- API ------------- */
 
@@ -21,6 +21,7 @@ export default function * root () {
     takeLatest(BluetoothTypes.INIT, initBluetooth),
     takeLatest(BluetoothTypes.CONNECT, connectDevice),
     takeLatest(BluetoothTypes.DISCONNECT, disconnectDevice),
-    takeLatest(BluetoothTypes.SUBSCRIBE_NOTIFICATION, receiveNotification)
+    takeLatest(BluetoothTypes.SUBSCRIBE_NOTIFICATION, receiveNotification),
+    takeLatest(BluetoothTypes.WRITE, writeMessage)
   ])
 }
