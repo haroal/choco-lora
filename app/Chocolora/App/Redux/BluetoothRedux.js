@@ -9,7 +9,6 @@ const { Types, Creators } = createActions({
   onInitDone: null,
   setControllerState: ['newState'],
   setConnectedDevice: ['newDevice'],
-  onValueReceived: ['newValue'],
   startScan: null,
   stopScan: null,
   onDeviceFound: ['deviceFound'],
@@ -19,6 +18,8 @@ const { Types, Creators } = createActions({
   disconnect: null,
   onDisconnected: null,
   subscribeNotification: ['device'],
+  write: ['message'],
+  onWriteDone: null,
   onError: ['error']
 })
 
@@ -34,14 +35,13 @@ export const BluetoothState = {
   Idle: 'Idle',
   Connecting: 'Connecting',
   Connected: 'Connected',
+  Writing: 'Writing',
   Disconnecting: 'Disconnecting'
 }
 
 const bleManager = new BleManager()
 
 export const INITIAL_STATE = Immutable({
-  values: null,
-  numMaxValues: 10,
   scannedDevices: [],
   connectedDevice: null,
   bluetoothState: BluetoothState.Idle,
@@ -54,8 +54,6 @@ export const INITIAL_STATE = Immutable({
 export const BluetoothSelectors = {
   getManager: (state) => bleManager,
   getError: (state) => state.bluetooth.error,
-  getLastValue: (state) => state.bluetooth.values !== null ? state.bluetooth.values[state.bluetooth.values.length - 1] : null,
-  getValues: (state) => state.bluetooth.values,
   getBluetoothState: state => state.bluetooth.bluetoothState,
   getControllerState: state => state.bluetooth.controllerState,
   getScannedDevices: state => state.bluetooth.scannedDevices,
@@ -75,17 +73,6 @@ export const setControllerState = (state, { newState }) =>
 
 export const setConnectedDevice = (state, { newDevice }) =>
   state.merge({ connectedDevice: newDevice })
-
-export const addValue = (state, { newValue }) => {
-  let values
-  if (state.values === null) {
-    values = [newValue]
-  } else {
-    values = [...state.values, newValue].slice(-state.numMaxValues)
-  }
-
-  return state.merge({ values })
-}
 
 export const startScan = (state) =>
   state.merge({ bluetoothState: BluetoothState.Scanning, scannedDevices: [] })
@@ -138,6 +125,12 @@ export const disconnect = (state) =>
 export const onDisconnected = (state) =>
   state.merge({ bluetoothState: BluetoothState.Idle, connectedDevice: null })
 
+export const write = (state) =>
+  state.merge({ bluetoothState: BluetoothState.Writing })
+
+export const onWriteDone = (state) =>
+  state.merge({ bluetoothState: BluetoothState.Idle })
+
 export const onError = (state, { error }) => {
   console.log('ERROR', error)
   return state.merge({ bluetoothState: BluetoothState.Idle, error: error })
@@ -150,7 +143,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ON_INIT_DONE]: onInitDone,
   [Types.SET_CONNECTED_DEVICE]: setConnectedDevice,
   [Types.SET_CONTROLLER_STATE]: setControllerState,
-  [Types.ON_VALUE_RECEIVED]: addValue,
   [Types.START_SCAN]: startScan,
   [Types.STOP_SCAN]: stopScan,
   [Types.ON_DEVICE_FOUND]: onDeviceFound,
@@ -159,5 +151,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ON_CONNECTED]: onConnected,
   [Types.DISCONNECT]: disconnect,
   [Types.ON_DISCONNECTED]: onDisconnected,
+  [Types.WRITE]: write,
+  [Types.ON_WRITE_DONE]: onWriteDone,
   [Types.ON_ERROR]: onError
 })

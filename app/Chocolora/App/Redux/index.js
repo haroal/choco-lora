@@ -6,7 +6,8 @@ import rootSaga from '../Sagas/'
 export const reducers = combineReducers({
   nav: require('./NavigationRedux').reducer,
   loading: require('./LoadingRedux').reducer,
-  bluetooth: require('./BluetoothRedux').reducer
+  bluetooth: require('./BluetoothRedux').reducer,
+  messages: require('./MessagesRedux').reducer,
 })
 
 export default () => {

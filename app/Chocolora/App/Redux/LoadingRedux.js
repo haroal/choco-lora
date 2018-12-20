@@ -17,8 +17,9 @@ export const LoadingId = {
   Initializing: 'Initializing',
   Scanning: 'Scanning',
   StoppingScan: 'StoppingScan',
-  Connecting: 'connecting',
-  Disconnecting: 'disconnecting'
+  Connecting: 'Connecting',
+  Disconnecting: 'Disconnecting',
+  Writing: 'Writing',
 }
 
 export const INITIAL_STATE = Immutable({
