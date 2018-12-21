@@ -33,7 +33,7 @@ export function * scanDevices () {
   const bleManager = yield select(BluetoothSelectors.getManager)
 
   const scanningChannel = eventChannel(emit => {
-    bleManager.startDeviceScan(null, null, (error, scannedDevice) => {
+    bleManager.startDeviceScan([BluetoothConfig.serviceUUID], null, (error, scannedDevice) => {
       if (error) {
         emit({ error, device: null })
       } else {
@@ -60,6 +60,19 @@ export function * scanDevices () {
 }
 
 /** ************ Connection ************* **/
+export function * onDisconnectedTask (channel) {
+  try {
+    const { error } = yield take(channel)
+    if (error) {
+      throw error
+    }
+
+    yield put(BluetoothActions.onDisconnected())
+  } catch (error) {
+    yield put(BluetoothActions.onError(error))
+  }
+}
+
 export function * connectDevice (action) {
   yield put(LoadingActions.onLoad(LoadingId.Connecting))
 
@@ -76,11 +89,23 @@ export function * connectDevice (action) {
     console.log('CONNECTING TO ', deviceId)
 
     let connectedDevice = yield apply(bleManager, bleManager.connectToDevice, [deviceId, { timeout: 5000 }])
-
     connectedDevice = yield apply(connectedDevice, connectedDevice.discoverAllServicesAndCharacteristics)
 
+    const onDisconnectedChannel = eventChannel(emit => {
+      connectedDevice.onDisconnected((error, device) => {
+        if (error) {
+          emit({ error })
+        } else {
+          emit({ error: null })
+        }
+      })
+
+      return () => {}
+    })
+
+    yield fork(onDisconnectedTask, onDisconnectedChannel)
+
     yield put(BluetoothActions.onConnected(connectedDevice))
-    console.log(connectedDevice)
 
     onConnectedCallback(connectedDevice)
   } catch (error) {
@@ -104,8 +129,6 @@ export function * disconnectDevice () {
       // TODO: stop reading value before disconnecting (ignored for now)
       yield apply(bleManager, bleManager.cancelDeviceConnection, [connectedDevice.id])
     }
-
-    yield put(BluetoothActions.onDisconnected())
   } catch (error) {
     yield put(BluetoothActions.onError(error))
   } finally {
@@ -145,7 +168,17 @@ export function * receiveNotificationTask (channel) {
         throw error
       }
 
-      yield put(MessagesActions.receiveMessageAction(value))
+      let magicCode = value.readUInt16BE(0)
+      console.log("Magic Code: ", magicCode)
+      let length = value.readUInt16BE(2)
+      console.log("Length: ", length)
+      let type = value.readUInt8(4)
+      console.log("Type: ", type)
+      let senderId = value.toString('utf8', 5, 15)
+      console.log("Sender Id: ", senderId)
+      let message = value.toString('utf8', 15)
+      console.log("Message: ", message)
+      yield put(MessagesActions.receiveMessageAction(senderId, message))
     }
   } catch (error) {
     yield put(BluetoothActions.onError(error))
@@ -163,12 +196,13 @@ export function * receiveNotification (action) {
     const notificationChannel = eventChannel(emit => {
       device.monitorCharacteristicForService(
         BluetoothConfig.serviceUUID,
-        BluetoothConfig.notifyCharacteristicUUID,
+        BluetoothConfig.receiveCharacteristicUUID,
         (error, characteristic) => {
           if (error) {
             // emit({ error, value: null })
           } else {
-            emit({ error: null, value: Buffer.from(characteristic.value, 'base64').toString('utf8') })
+            console.log(Buffer.from(characteristic.value, 'base64'))
+            emit({ error: null, value: Buffer.from(characteristic.value, 'base64') })
           }
         }
       )

@@ -1,7 +1,11 @@
 // Bluetooth relative configuration
 
 export default {
-  serviceUUID: '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-  notifyCharacteristicUUID: '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
-  sendCharacteristicUUID: '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+  // Service
+  serviceUUID: 'a65d3800-99f5-4e5e-85ab-fdd531c0aafa',
+  // Characteristics
+  sendCharacteristicUUID: 'a65d3801-99f5-4e5e-85ab-fdd531c0aafa',
+  sentCharacteristicUUID: 'a65d3802-99f5-4e5e-85ab-fdd531c0aafa',
+  receiveCharacteristicUUID: 'a65d3803-99f5-4e5e-85ab-fdd531c0aafa',
+  readyCharacteristicUUID: 'a65d3804-99f5-4e5e-85ab-fdd531c0aafa'
 }

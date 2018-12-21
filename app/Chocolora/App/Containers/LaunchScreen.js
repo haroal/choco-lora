@@ -46,6 +46,14 @@ class LaunchScreen extends Component {
     })
   }
 
+  componentDidUpdate (prevProps) {
+    if (prevProps.bluetoothState !== this.props.bluetoothState) {
+      this.props.navigation.setParams({
+        bluetoothState: this.props.bluetoothState
+      })
+    }
+  }
+
   async onConnectPressed () {
     if (this.props.controllerState !== ControllerState.PoweredOn) {
       await this.props.bleManager.enable()
@@ -96,16 +104,6 @@ class LaunchScreen extends Component {
 
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
-
-        {this.props.values !== null &&
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.digitStyle}>
-              {this.props.lastValue}
-            </Text>
-            <Text style={styles.littleDigitStyle}> mV </Text>
-          </View>
-        }
-      <View/>
         <View>
           <Icon.Button
             name={'plus'}
@@ -125,9 +123,7 @@ const mapStateToProps = (state) => ({
   bleManager: BluetoothSelectors.getManager(state),
   controllerState: BluetoothSelectors.getControllerState(state),
   bluetoothState: BluetoothSelectors.getBluetoothState(state),
-  connectedDevice: BluetoothSelectors.getConnectedDevice(state),
-  lastValue: BluetoothSelectors.getLastValue(state),
-  values: BluetoothSelectors.getValues(state)
+  connectedDevice: BluetoothSelectors.getConnectedDevice(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
