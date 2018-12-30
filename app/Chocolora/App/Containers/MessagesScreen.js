@@ -20,11 +20,9 @@ class MessagesScreen extends Component {
         fontWeight: 'bold',
       },
       headerRight: (
-        <TextInput
-          style={styles.destinationTextInput}
-          //onSubmitEditing={(text) => console.log(text)}
-          //value={this.state.text}
-        />
+        <View>
+        {navigation.getParam('renderNameInput')}
+        </View>
       ),
     }
   }
@@ -33,9 +31,25 @@ class MessagesScreen extends Component {
   constructor (props) {
     super(props)
     this.sendMessage = this.sendMessage.bind(this)
+    this.setDestinationName = this.setDestinationName.bind(this)
     this.state = {
-      messageText:""
+      messageText:"",
+      nameText:""
     }
+    this.props.navigation.setParams({
+      renderNameInput: this.renderNameInput()
+    })
+  }
+
+  renderNameInput(){
+    return (
+      <TextInput
+      style={styles.destinationTextInput}
+      onChangeText={(text) => this.setState({nameText:text})}
+      onSubmitEditing={this.setDestinationName()}
+      //value={this.state.text}
+      />
+    )
   }
 
   sendMessage(){
@@ -45,11 +59,15 @@ class MessagesScreen extends Component {
     //this.setState([name]: value);
   }
 
+  setDestinationName(){
+    this.props.setDestinationNameValidate(this.props.nameText)
+  }
+
   renderItem({item}){
     if (item[0]===1){
       return(
         <View>
-          <Text style={{color:"black"}}>{item[1]}</Text>
+          <Text style={{color:"black"}}>{item[2]}</Text>
         </View>
       )
     }else{
@@ -58,7 +76,6 @@ class MessagesScreen extends Component {
   }
 
   render () {
-    console.log(this.props.previousMessages)
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -72,7 +89,6 @@ class MessagesScreen extends Component {
           style={styles.messageTextInput}
           onChangeText={(text) => this.setState({messageText:text})}
           onSubmitEditing={this.sendMessage}
-          //value={this.state.message}
         />
       </ScrollView>
     )
@@ -88,7 +104,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     sendingMessage: (message) => dispatch(MessagesActions.sendMessageAction(message)),
-    writeBluetooth: (message) => dispatch(BluetoothActions.write(message))
+    writeBluetooth: (message) => dispatch(BluetoothActions.write(message)),
+    setDestinationNameValidate: (destination) => dispatch(MessagesActions.changeDestinationNameAction(destination))
   }
 }
 

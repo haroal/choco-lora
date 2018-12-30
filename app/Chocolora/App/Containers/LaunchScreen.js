@@ -3,6 +3,7 @@ import { Button, Text, ScrollView, View } from 'react-native'
 import connect from 'react-redux/es/connect/connect'
 import { State as ControllerState } from 'react-native-ble-plx'
 import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
+import MessagesActions, { MessagesSelectors, MessagesState } from '../Redux/MessagesRedux'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 // Styles
@@ -13,20 +14,20 @@ class LaunchScreen extends Component {
     return {
       title: 'Choco-Lora',
       headerStyle: {
-        backgroundColor: '#f4511e',
+        backgroundColor: '#41c5e1',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
         fontWeight: 'bold',
       },
       headerRight: (
-        <Icon.Button
+        <View style={{marginRight: 10}}><Icon.Button
           name={'bluetooth'}
           size={20}
           onPress={navigation.getParam('bluetoothState') === BluetoothState.Connected ? navigation.getParam('onDisconnectPressed') : navigation.getParam('onConnectPressed')}
           backgroundColor={navigation.getParam('bluetoothState') === BluetoothState.Connected ? "blue" : "grey"}
           iconStyle={styles.btButtonIconBluetooth}
-        />
+        /></View>
       ),
     }
   }
@@ -34,7 +35,6 @@ class LaunchScreen extends Component {
   constructor (props) {
     super(props)
 
-    this.displayConnectionButton = this.displayConnectionButton.bind(this)
     this.onConnectPressed = this.onConnectPressed.bind(this)
     this.onDisconnectPressed = this.onDisconnectPressed.bind(this)
     this.newMessage = this.newMessage.bind(this)
@@ -57,63 +57,27 @@ class LaunchScreen extends Component {
     this.props.disconnect()
   }
 
-  displayConnectionButton () {
-    if (this.props.bluetoothState === BluetoothState.Connected) {
-      return (
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.nameDeviceConnected}>Connecté à {this.props.connectedDevice.id}</Text>
-          <View style={styles.btDisconnectButton}>
-            <Icon.Button
-              name={'bluetooth'}
-              size={20}
-              onPress={this.onDisconnectPressed}
-              backgroundColor="grey"
-              iconStyle={styles.btButtonIcon}>
-            </Icon.Button>
-          </View>
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.btConnectButton}>
-          <Icon.Button
-            name={'bluetooth'}
-            size={20}
-            onPress={this.onConnectPressed}
-            backgroundColor="grey"
-            iconStyle={styles.btButtonIcon}>
-          </Icon.Button>
-        </View>
-      )
-    }
-  }
-
   newMessage(){
     this.props.navigation.push('MessagesScreen')
+    this.props.addDestination()
+    console.log(this.props.destinations)
   }
 
   render () {
 
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
-
-        {this.props.values !== null &&
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.digitStyle}>
-              {this.props.lastValue}
-            </Text>
-            <Text style={styles.littleDigitStyle}> mV </Text>
-          </View>
-        }
-      <View/>
+      <View
+        style={styles.vMessages}>
+        <Icon.Button
+          name={'plus'}
+          size={20}
+          backgroundColor= '#00b779'
+          iconStyle={styles.btButtonIconAddMessage}
+          onPress={this.newMessage}
+        >New message</Icon.Button>
+      </View>
         <View>
-          <Icon.Button
-            name={'plus'}
-            size={20}
-            backgroundColor="blue"
-            iconStyle={styles.btButtonIconAddMessage}
-            onPress={this.newMessage}
-          >New message</Icon.Button>
           <Text style={styles.authors}> By Alexis A., Thomas L. and Chloé V. </Text>
         </View>
       </ScrollView>
@@ -126,12 +90,13 @@ const mapStateToProps = (state) => ({
   controllerState: BluetoothSelectors.getControllerState(state),
   bluetoothState: BluetoothSelectors.getBluetoothState(state),
   connectedDevice: BluetoothSelectors.getConnectedDevice(state),
-  lastValue: BluetoothSelectors.getLastValue(state),
-  values: BluetoothSelectors.getValues(state)
+  destinations: MessagesSelectors.getDestinations(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  disconnect: () => dispatch(BluetoothActions.disconnect())
+  disconnect: () => dispatch(BluetoothActions.disconnect()),
+  addDestination: () => dispatch(MessagesActions.addDestinationAction()),
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LaunchScreen)

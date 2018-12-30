@@ -15,8 +15,12 @@ export default StyleSheet.create({
   centered: {
     alignItems: 'center'
   },
+  vMessages:{
+    marginTop:10,
+    marginBottom:10,
+  },
   btButtonIconAddMessage: {
-    marginRight: 55,
+    marginRight: 5
   },
   btButtonIconBluetooth: {
     marginRight: 0,
