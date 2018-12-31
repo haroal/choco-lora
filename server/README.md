@@ -65,7 +65,7 @@ To forward port `80` to `localhost:1880` (the Node-RED server), we use Nginx.
 ```
 
 Then, edit this file (as `sudo`) to configure the server : **/etc/nginx/sites-available/node-red**.
- 
+
 ```
 server {
     listen 80 default_server;

@@ -2,233 +2,30 @@
     {
         "id": "4c0d676e.9c66d",
         "type": "tab",
-        "label": "Flow 1",
+        "label": "Events",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "9e975069.211e9",
-        "type": "ttn uplink",
-        "z": "4c0d676e.9c66d",
-        "name": "TTN Chocolora Uplinks",
-        "app": "e77f0112.1f955",
-        "dev_id": "",
-        "field": "",
-        "x": 200,
-        "y": 160,
-        "wires": [
-            [
-                "96f1b4bc.bf863",
-                "7d50bfc8.e5362",
-                "bfb0b898.79389",
-                "a07dd4c6.01dba8"
-            ]
-        ]
+        "id": "fd842509.77039",
+        "type": "tab",
+        "label": "Messages",
+        "disabled": false,
+        "info": ""
     },
     {
-        "id": "96f1b4bc.bf863",
-        "type": "debug",
-        "z": "4c0d676e.9c66d",
-        "name": "Uplinks",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 460,
-        "y": 160,
-        "wires": []
+        "id": "698a39d1.69e2b8",
+        "type": "tab",
+        "label": "Dashboard",
+        "disabled": false,
+        "info": ""
     },
     {
-        "id": "152f3c1a.3fb104",
-        "type": "ttn event",
-        "z": "4c0d676e.9c66d",
-        "name": "TTN Chocolora Events",
-        "app": "e77f0112.1f955",
-        "dev_id": "",
-        "event": "#",
-        "x": 200,
-        "y": 240,
-        "wires": [
-            [
-                "f50717e9.42eee8"
-            ]
-        ]
-    },
-    {
-        "id": "f50717e9.42eee8",
-        "type": "debug",
-        "z": "4c0d676e.9c66d",
-        "name": "Events",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 450,
-        "y": 240,
-        "wires": []
-    },
-    {
-        "id": "54a4d58b.8fcad4",
-        "type": "ttn downlink",
-        "z": "4c0d676e.9c66d",
-        "name": "TTN chocolora downlinks",
-        "app": "e77f0112.1f955",
-        "dev_id": "",
-        "port": "",
-        "confirmed": false,
-        "schedule": "replace",
-        "x": 710,
-        "y": 440,
-        "wires": []
-    },
-    {
-        "id": "7d50bfc8.e5362",
-        "type": "function",
-        "z": "4c0d676e.9c66d",
-        "name": "Format ouput",
-        "func": "return {\n  dev_id: msg.dev_id,\n  port: msg.port,\n  payload: msg.payload\n}",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 480,
-        "y": 380,
-        "wires": [
-            [
-                "4a887c08.050e1c",
-                "54a4d58b.8fcad4"
-            ]
-        ]
-    },
-    {
-        "id": "4a887c08.050e1c",
-        "type": "debug",
-        "z": "4c0d676e.9c66d",
-        "name": "Outputs",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 660,
-        "y": 380,
-        "wires": []
-    },
-    {
-        "id": "421b543a.731b04",
-        "type": "influxdb out",
-        "z": "4c0d676e.9c66d",
-        "influxdb": "8dc7fb3a.0f1048",
-        "name": "InfluxDB messages",
-        "measurement": "messages",
-        "precision": "",
-        "retentionPolicy": "",
-        "x": 810,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "bfb0b898.79389",
-        "type": "function",
-        "z": "4c0d676e.9c66d",
-        "name": "Format to save",
-        "func": "return {\n    payload: [\n        {\n            text: msg.payload.toString('utf8'),\n        },\n        {\n            sender_dev_id: msg.dev_id,\n            receiver_dev_id: msg.dev_id\n        }\n    ]\n};\n",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 480,
-        "y": 80,
-        "wires": [
-            [
-                "d575f7ec.a90298",
-                "421b543a.731b04"
-            ]
-        ]
-    },
-    {
-        "id": "d575f7ec.a90298",
-        "type": "debug",
-        "z": "4c0d676e.9c66d",
-        "name": "Savings",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 780,
-        "y": 140,
-        "wires": []
-    },
-    {
-        "id": "a07dd4c6.01dba8",
-        "type": "influxdb in",
-        "z": "4c0d676e.9c66d",
-        "influxdb": "8dc7fb3a.0f1048",
-        "name": "Get messages InfluxDB",
-        "query": "SELECT sender_dev_id, receiver_dev_id, text FROM messages",
-        "rawOutput": false,
-        "precision": "",
-        "retentionPolicy": "",
-        "x": 450,
-        "y": 580,
-        "wires": [
-            [
-                "e29f87e7.36f7e8",
-                "6c12a4ff.51e534"
-            ]
-        ]
-    },
-    {
-        "id": "e29f87e7.36f7e8",
-        "type": "debug",
-        "z": "4c0d676e.9c66d",
-        "name": "Display saved messages",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 930,
-        "y": 580,
-        "wires": []
-    },
-    {
-        "id": "6c12a4ff.51e534",
-        "type": "ui_template",
-        "z": "4c0d676e.9c66d",
-        "group": "81bf9558.ba1688",
-        "name": "",
-        "order": 0,
-        "width": "12",
-        "height": "12",
-        "format": "<ul>\n    <li ng-repeat=\"message in msg.payload\">\n       {{message.sender_dev_id}} sent {{message.text}} to {{message.receiver_dev_id}} at {{message.time | date:'yyyy-MM-dd HH:mm:ss'}}\n    </li>\n</ul>",
-        "storeOutMessages": true,
-        "fwdInMessages": false,
-        "templateScope": "local",
-        "x": 700,
-        "y": 680,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "738d6c4.b222214",
-        "type": "inject",
-        "z": "4c0d676e.9c66d",
-        "name": "TEST update",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 210,
-        "y": 580,
-        "wires": [
-            [
-                "a07dd4c6.01dba8"
-            ]
-        ]
+        "id": "5f8dec2c.0c4754",
+        "type": "tab",
+        "label": "Save to DB",
+        "disabled": false,
+        "info": ""
     },
     {
         "id": "e77f0112.1f955",
@@ -237,6 +34,111 @@
         "appId": "chocolora",
         "accessKey": "ttn-account-v2.gL12jiQzXwiC77fpHNZZWCwBf0tP0B1kd9bv6XPHbCs",
         "discovery": "discovery.thethingsnetwork.org:1900"
+    },
+    {
+        "id": "9ffbb39a.fafb68",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#000000",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#0eb8c0",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey"
+            }
+        },
+        "site": {
+            "name": "Choco-LoRa",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "5b640ca1.1d16f4",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Choco-LoRa",
+        "icon": "dashboard",
+        "order": 1
     },
     {
         "id": "8dc7fb3a.0f1048",
@@ -251,21 +153,2013 @@
         "tls": ""
     },
     {
-        "id": "81bf9558.ba1688",
+        "id": "640866fc.b2dfa",
         "type": "ui_group",
         "z": "",
-        "name": "Messages échangés",
+        "name": "Taux",
         "tab": "5b640ca1.1d16f4",
+        "order": 2,
         "disp": true,
         "width": "12",
         "collapse": false
     },
     {
-        "id": "5b640ca1.1d16f4",
-        "type": "ui_tab",
+        "id": "748d4408.a71804",
+        "type": "ui_group",
         "z": "",
-        "name": "Choco-LoRa",
-        "icon": "dashboard",
-        "order": 1
+        "name": "Statistiques",
+        "tab": "5b640ca1.1d16f4",
+        "order": 4,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "8e030c59.6f0da8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Evolutions (1 mois)",
+        "tab": "5b640ca1.1d16f4",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "152f3c1a.3fb104",
+        "type": "ttn event",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN Chocolora Activations",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "event": "activations",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "fbd99e2e.50b21",
+                "f2596d36.1adfc8"
+            ]
+        ]
+    },
+    {
+        "id": "a3c58942.a8d288",
+        "type": "ttn event",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN Chocolora Errors",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "event": "errors",
+        "x": 140,
+        "y": 740,
+        "wires": [
+            [
+                "c7437c59.721a2"
+            ]
+        ]
+    },
+    {
+        "id": "3b8885ad.5e7a42",
+        "type": "ttn event",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN Chocolora Registration",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "event": "create",
+        "x": 160,
+        "y": 320,
+        "wires": [
+            [
+                "3c8b5428.cbb274",
+                "6e5f92a3.466d94"
+            ]
+        ]
+    },
+    {
+        "id": "3c8b5428.cbb274",
+        "type": "function",
+        "z": "4c0d676e.9c66d",
+        "name": "Format new device to save",
+        "func": "return {\n    payload: [\n        {\n            dev_id: msg.dev_id,\n        },\n        {\n            dev_id_tag: msg.dev_id\n        }\n    ]\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 320,
+        "wires": [
+            [
+                "f8056920.f3807"
+            ]
+        ]
+    },
+    {
+        "id": "54556f7b.68464",
+        "type": "ttn event",
+        "z": "4c0d676e.9c66d",
+        "name": "TTN Chocolora Removal",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "event": "delete",
+        "x": 150,
+        "y": 540,
+        "wires": [
+            [
+                "ae0d987b.8beca8",
+                "59682fe2.a9f088"
+            ]
+        ]
+    },
+    {
+        "id": "ae0d987b.8beca8",
+        "type": "function",
+        "z": "4c0d676e.9c66d",
+        "name": "Format device to remove",
+        "func": "return {\n    query: `DELETE FROM devices WHERE dev_id_tag = '${msg.dev_id}'`\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 540,
+        "wires": [
+            [
+                "d4654943.3fc72"
+            ]
+        ]
+    },
+    {
+        "id": "f8056920.f3807",
+        "type": "influxdb out",
+        "z": "4c0d676e.9c66d",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Insert device InfluxDB",
+        "measurement": "devices",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 740,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "e0426653.7de748",
+        "type": "ttn uplink",
+        "z": "fd842509.77039",
+        "name": "TTN Chocolora Uplinks",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "field": "",
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "54e3a9dc.ad125",
+                "d6abf3ab.c50c6"
+            ]
+        ]
+    },
+    {
+        "id": "54e3a9dc.ad125",
+        "type": "debug",
+        "z": "fd842509.77039",
+        "name": "Uplinks",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 380,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "d4654943.3fc72",
+        "type": "influxdb in",
+        "z": "4c0d676e.9c66d",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Remove device InfluxDB",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 750,
+        "y": 540,
+        "wires": [
+            [
+                "47c74fa.df55a3"
+            ]
+        ]
+    },
+    {
+        "id": "47c74fa.df55a3",
+        "type": "debug",
+        "z": "4c0d676e.9c66d",
+        "name": "Removed",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 980,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "ec0ee515.d836a8",
+        "type": "switch",
+        "z": "fd842509.77039",
+        "name": "Test device exists",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 480,
+        "wires": [
+            [
+                "8859f97c.f0a558"
+            ],
+            [
+                "a7315107.85f0a8"
+            ]
+        ]
+    },
+    {
+        "id": "f5942472.b9cee",
+        "type": "influxdb in",
+        "z": "fd842509.77039",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get device InfluxDB",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 390,
+        "y": 480,
+        "wires": [
+            [
+                "ec0ee515.d836a8"
+            ]
+        ]
+    },
+    {
+        "id": "3baf04c7.5885dc",
+        "type": "function",
+        "z": "fd842509.77039",
+        "name": "Format query",
+        "func": "return {\n  query: `SELECT * FROM devices WHERE dev_id_tag='${msg.receiver_dev_id}'`,\n  port: msg.port,\n  sender_dev_id: msg.dev_id,\n  receiver_dev_id: msg.receiver_dev_id,\n  data: msg.data\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 180,
+        "y": 480,
+        "wires": [
+            [
+                "f5942472.b9cee"
+            ]
+        ]
+    },
+    {
+        "id": "d27092f5.f135b8",
+        "type": "switch",
+        "z": "fd842509.77039",
+        "name": "If send response",
+        "property": "sendResponse",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 410,
+        "y": 300,
+        "wires": [
+            [
+                "72cdf40a.473f3c"
+            ],
+            [
+                "3809ce70.e68cba"
+            ]
+        ]
+    },
+    {
+        "id": "b3a1b36a.ec93d",
+        "type": "function",
+        "z": "fd842509.77039",
+        "name": "Decode message",
+        "func": "try {\n    const type = msg.payload.readUInt8(0);\n    \n    if (type === 0x01) {\n        // If it is a polling message\n        msg.sendResponse = false;\n    } else {\n        // Else it is a regular message\n        msg.sendResponse = true;\n        msg.receiver_dev_id = msg.payload.toString('utf8', 1, 11).replace('\\u0000', '');\n        msg.data = msg.payload.slice(11)\n        if (msg.data.length === 0) {\n            throw new Error('Invalid format')\n        }\n    }\n\n} catch (err) {\n    msg.sendResponse = false;\n    msg.error = err.toString();\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 190,
+        "y": 300,
+        "wires": [
+            [
+                "d27092f5.f135b8"
+            ]
+        ]
+    },
+    {
+        "id": "72cdf40a.473f3c",
+        "type": "switch",
+        "z": "fd842509.77039",
+        "name": "If error",
+        "property": "error",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 1,
+        "x": 590,
+        "y": 260,
+        "wires": [
+            [
+                "2335e31a.a1205c",
+                "8ed6d0df.4aa408"
+            ]
+        ]
+    },
+    {
+        "id": "fbd99e2e.50b21",
+        "type": "function",
+        "z": "4c0d676e.9c66d",
+        "name": "Format new connection to save",
+        "func": "return {\n    payload: [\n        {\n            dev_id: msg.dev_id,\n        },\n        {\n            dev_id_tag: msg.dev_id\n        }\n    ]\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 120,
+        "wires": [
+            [
+                "13e5cc8b.09fb6b"
+            ]
+        ]
+    },
+    {
+        "id": "13e5cc8b.09fb6b",
+        "type": "influxdb out",
+        "z": "4c0d676e.9c66d",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Insert connection InfluxDB",
+        "measurement": "connections",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 750,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "d6abf3ab.c50c6",
+        "type": "link out",
+        "z": "fd842509.77039",
+        "name": "ttn_uplink",
+        "links": [
+            "61ab8abf.2e5304",
+            "3eaef804.59df4",
+            "69237d29.a5e6dc",
+            "d2040faf.61eb8",
+            "a81fdd69.754e58",
+            "820f7465.f3c098",
+            "7bacfdf0.6a47d4"
+        ],
+        "x": 335,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "3eaef804.59df4",
+        "type": "link in",
+        "z": "fd842509.77039",
+        "name": "uplink_to_decode",
+        "links": [
+            "d6abf3ab.c50c6"
+        ],
+        "x": 55,
+        "y": 300,
+        "wires": [
+            [
+                "b3a1b36a.ec93d"
+            ]
+        ]
+    },
+    {
+        "id": "3809ce70.e68cba",
+        "type": "link out",
+        "z": "fd842509.77039",
+        "name": "uplink_to_send",
+        "links": [
+            "611b77d7.40d6a8"
+        ],
+        "x": 555,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "611b77d7.40d6a8",
+        "type": "link in",
+        "z": "fd842509.77039",
+        "name": "uplink_to_send",
+        "links": [
+            "3809ce70.e68cba"
+        ],
+        "x": 55,
+        "y": 480,
+        "wires": [
+            [
+                "3baf04c7.5885dc"
+            ]
+        ]
+    },
+    {
+        "id": "2335e31a.a1205c",
+        "type": "link out",
+        "z": "fd842509.77039",
+        "name": "decoding_error_to_save",
+        "links": [
+            "8ad87926.ee0f98",
+            "d7d605a2.2f8a18"
+        ],
+        "x": 715,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "3537c4f7.991e94",
+        "type": "link out",
+        "z": "fd842509.77039",
+        "name": "message_to_send",
+        "links": [
+            "9c3ace92.2a52c8"
+        ],
+        "x": 995,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "4947b909.2467d",
+        "type": "comment",
+        "z": "fd842509.77039",
+        "name": "Decode message",
+        "info": "",
+        "x": 120,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "191518ba.eef087",
+        "type": "comment",
+        "z": "fd842509.77039",
+        "name": "Route message",
+        "info": "",
+        "x": 120,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "f937b9ba.0f6db",
+        "type": "comment",
+        "z": "fd842509.77039",
+        "name": "Receive message",
+        "info": "",
+        "x": 130,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "6e98b74a.b8047",
+        "type": "comment",
+        "z": "4c0d676e.9c66d",
+        "name": "When a device connects",
+        "info": "",
+        "x": 150,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a3336505.fd0fa8",
+        "type": "comment",
+        "z": "4c0d676e.9c66d",
+        "name": "When a device is registered",
+        "info": "",
+        "x": 160,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "102917a3.aeb9f8",
+        "type": "function",
+        "z": "5f8dec2c.0c4754",
+        "name": "Format error to save",
+        "func": "return {\n    payload: [\n        {\n            error: msg.error || 'Erreur inconnue'\n        },\n        {\n            sender_dev_id: msg.dev_id,\n            receiver_dev_id: msg.receiver_dev_id || null\n        }\n    ]\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 240,
+        "y": 140,
+        "wires": [
+            [
+                "31dc9c90.016dec"
+            ]
+        ]
+    },
+    {
+        "id": "f2c59510.98d798",
+        "type": "debug",
+        "z": "5f8dec2c.0c4754",
+        "name": "Errors",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 210,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "31dc9c90.016dec",
+        "type": "influxdb out",
+        "z": "5f8dec2c.0c4754",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Save error InfluxDB",
+        "measurement": "errors",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 470,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "d7d605a2.2f8a18",
+        "type": "link in",
+        "z": "5f8dec2c.0c4754",
+        "name": "error_to_save",
+        "links": [
+            "2335e31a.a1205c",
+            "e03b06c5.6783c8",
+            "c7437c59.721a2"
+        ],
+        "x": 75,
+        "y": 140,
+        "wires": [
+            [
+                "102917a3.aeb9f8",
+                "f2c59510.98d798",
+                "c467e505.65b23"
+            ]
+        ]
+    },
+    {
+        "id": "ef0d40c7.9a5b88",
+        "type": "comment",
+        "z": "5f8dec2c.0c4754",
+        "name": "Errors",
+        "info": "",
+        "x": 110,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "c7437c59.721a2",
+        "type": "link out",
+        "z": "4c0d676e.9c66d",
+        "name": "ttn_error_to_save",
+        "links": [
+            "d7d605a2.2f8a18"
+        ],
+        "x": 355,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "6acca487.0f5294",
+        "type": "comment",
+        "z": "4c0d676e.9c66d",
+        "name": "When a device is removed",
+        "info": "",
+        "x": 150,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "45d4c9d8.4d7ba",
+        "type": "comment",
+        "z": "4c0d676e.9c66d",
+        "name": "When an error occures",
+        "info": "",
+        "x": 140,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "8859f97c.f0a558",
+        "type": "function",
+        "z": "fd842509.77039",
+        "name": "It doesn't exist",
+        "func": "msg.type = 0x03; // 0x03 => error message\nmsg.error = \"Erreur: device non trouvé\";\nmsg.receiver_dev_id = msg.sender_dev_id;\nmsg.data = Buffer.from('Erreur', 'utf8');\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 820,
+        "y": 440,
+        "wires": [
+            [
+                "772093bf.6b64fc",
+                "3537c4f7.991e94"
+            ]
+        ]
+    },
+    {
+        "id": "a7315107.85f0a8",
+        "type": "function",
+        "z": "fd842509.77039",
+        "name": "It exists",
+        "func": "msg.type = 0x02; // 0x02 => normal message\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 840,
+        "y": 520,
+        "wires": [
+            [
+                "3537c4f7.991e94",
+                "772093bf.6b64fc"
+            ]
+        ]
+    },
+    {
+        "id": "9c3ace92.2a52c8",
+        "type": "link in",
+        "z": "fd842509.77039",
+        "name": "message_to_send",
+        "links": [
+            "3537c4f7.991e94",
+            "e68cf21d.a05218",
+            "8ed6d0df.4aa408"
+        ],
+        "x": 55,
+        "y": 680,
+        "wires": [
+            [
+                "ed521c21.6ce4c8"
+            ]
+        ]
+    },
+    {
+        "id": "c01bff9e.63ede",
+        "type": "ttn downlink",
+        "z": "fd842509.77039",
+        "name": "TTN chocolora downlinks",
+        "app": "e77f0112.1f955",
+        "dev_id": "",
+        "port": "",
+        "confirmed": false,
+        "schedule": "last",
+        "x": 430,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "50e7962f.839128",
+        "type": "comment",
+        "z": "fd842509.77039",
+        "name": "Send message",
+        "info": "",
+        "x": 120,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "ed521c21.6ce4c8",
+        "type": "function",
+        "z": "fd842509.77039",
+        "name": "Format message",
+        "func": "const type = Buffer.from([msg.type]);\nconst sender = Buffer.alloc(10);\nsender.write(msg.sender_dev_id, 0, msg.sender_dev_id.length, \"utf8\")\n\nmsg.dev_id = msg.receiver_dev_id;\nmsg.payload = Buffer.concat([type, sender, msg.data]);\ndelete msg.data;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 190,
+        "y": 680,
+        "wires": [
+            [
+                "c01bff9e.63ede",
+                "7d36489d.18b9a"
+            ]
+        ]
+    },
+    {
+        "id": "772093bf.6b64fc",
+        "type": "link out",
+        "z": "fd842509.77039",
+        "name": "message_to_save",
+        "links": [
+            "b31aa20b.376dd",
+            "df7895ba.af2b8"
+        ],
+        "x": 995,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "71c91ec.b18106",
+        "type": "function",
+        "z": "5f8dec2c.0c4754",
+        "name": "Format message to save",
+        "func": "return {\n    payload: [\n        {\n            text: msg.data.toString('utf8')\n        },\n        {\n            sender_dev_id: msg.sender_dev_id,\n            receiver_dev_id: msg.receiver_dev_id\n        }\n    ]\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 230,
+        "y": 340,
+        "wires": [
+            [
+                "392956.0250beaa"
+            ]
+        ]
+    },
+    {
+        "id": "392956.0250beaa",
+        "type": "influxdb out",
+        "z": "5f8dec2c.0c4754",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Save message InfluxDB",
+        "measurement": "messages",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 510,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "df7895ba.af2b8",
+        "type": "link in",
+        "z": "5f8dec2c.0c4754",
+        "name": "message_to_save",
+        "links": [
+            "772093bf.6b64fc"
+        ],
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "71c91ec.b18106"
+            ]
+        ]
+    },
+    {
+        "id": "3505ca21.2f9276",
+        "type": "comment",
+        "z": "5f8dec2c.0c4754",
+        "name": "Save message",
+        "info": "",
+        "x": 140,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "8ed6d0df.4aa408",
+        "type": "link out",
+        "z": "fd842509.77039",
+        "name": "decoding_error_to_save",
+        "links": [
+            "9c3ace92.2a52c8"
+        ],
+        "x": 715,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "343d4e0d.d8aa9a",
+        "type": "comment",
+        "z": "698a39d1.69e2b8",
+        "name": "Display rates",
+        "info": "",
+        "x": 110,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "afc7e07.fb70b2",
+        "type": "ui_gauge",
+        "z": "698a39d1.69e2b8",
+        "name": "Gauge rate messages",
+        "group": "640866fc.b2dfa",
+        "order": 0,
+        "width": "4",
+        "height": "5",
+        "gtype": "gage",
+        "title": "Nombre de messages/minute",
+        "label": "messages",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 760,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "7eb4cc1.716ae34",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get messages rate InfluxDB",
+        "query": "SELECT COUNT(text) FROM messages WHERE time > now() - 1m",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 240,
+        "y": 420,
+        "wires": [
+            [
+                "6ad24f48.db32d"
+            ]
+        ]
+    },
+    {
+        "id": "c835b763.1c5d78",
+        "type": "comment",
+        "z": "698a39d1.69e2b8",
+        "name": "Display graphs",
+        "info": "",
+        "x": 120,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "f1da3dbb.d04058",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "errors_dashboard",
+        "links": [
+            "d031ac50.8a073"
+        ],
+        "x": 55,
+        "y": 900,
+        "wires": [
+            [
+                "aa493a70.6ba34"
+            ]
+        ]
+    },
+    {
+        "id": "aa493a70.6ba34",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get errors/day InfluxDB",
+        "query": " SELECT COUNT(error) FROM errors WHERE time > now() - 30d GROUP BY time(1d)",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 230,
+        "y": 900,
+        "wires": [
+            [
+                "45ebfb9a.3f7f14"
+            ]
+        ]
+    },
+    {
+        "id": "45ebfb9a.3f7f14",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format errors chart",
+        "func": "msg.payload = [{\n    series: [\"Erreurs\"],\n    data: [\n        msg.payload.map((data) => {\n            return {\n                x: data.time,\n                y: data.count\n            };\n        })\n    ]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 900,
+        "wires": [
+            [
+                "eda5be6.f2efbc"
+            ]
+        ]
+    },
+    {
+        "id": "eda5be6.f2efbc",
+        "type": "ui_chart",
+        "z": "698a39d1.69e2b8",
+        "name": "Errors/day chart",
+        "group": "8e030c59.6f0da8",
+        "order": 3,
+        "width": "12",
+        "height": "4",
+        "label": "Erreurs/jour sur le dernier mois",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "D/M",
+        "interpolate": "linear",
+        "nodata": "Aucune donnée",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "31",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 760,
+        "y": 900,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "d3985f78.4dc6b",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "connections_dashboard",
+        "links": [
+            "d031ac50.8a073"
+        ],
+        "x": 55,
+        "y": 820,
+        "wires": [
+            [
+                "3080a9f1.707536"
+            ]
+        ]
+    },
+    {
+        "id": "3080a9f1.707536",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get connections/day InfluxDB",
+        "query": " SELECT COUNT(dev_id) FROM connections WHERE time > now() - 30d GROUP BY time(1d)",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 250,
+        "y": 820,
+        "wires": [
+            [
+                "b9aa2d91.23de48"
+            ]
+        ]
+    },
+    {
+        "id": "b9aa2d91.23de48",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format connections chart",
+        "func": "msg.payload = [{\n    series: [\"Connexions\"],\n    data: [\n        msg.payload.map((data) => {\n            return {\n                x: data.time,\n                y: data.count\n            };\n        })\n    ]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 530,
+        "y": 820,
+        "wires": [
+            [
+                "1c6845c.acd233a"
+            ]
+        ]
+    },
+    {
+        "id": "1c6845c.acd233a",
+        "type": "ui_chart",
+        "z": "698a39d1.69e2b8",
+        "name": "Connections/day chart",
+        "group": "8e030c59.6f0da8",
+        "order": 2,
+        "width": "12",
+        "height": "4",
+        "label": "Connexions/jour sur le dernier mois",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "D/M",
+        "interpolate": "linear",
+        "nodata": "Aucune donnée",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "31",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 800,
+        "y": 820,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e14fcac7.702508",
+        "type": "ui_gauge",
+        "z": "698a39d1.69e2b8",
+        "name": "Gauge rate connections",
+        "group": "640866fc.b2dfa",
+        "order": 0,
+        "width": "4",
+        "height": "5",
+        "gtype": "gage",
+        "title": "Nombre de connexions/minute",
+        "label": "connexions",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 770,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "926235dc.0d7d6",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get connections rate InfluxDB",
+        "query": "SELECT COUNT(dev_id) FROM connections WHERE time > now() - 1m",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 250,
+        "y": 500,
+        "wires": [
+            [
+                "1860909a.a8cecf"
+            ]
+        ]
+    },
+    {
+        "id": "1860909a.a8cecf",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format rate gauge",
+        "func": "if (msg.payload.length === 0) {\n    msg.payload = 0;\n} else {\n    msg.payload = msg.payload[0].count\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 500,
+        "wires": [
+            [
+                "e14fcac7.702508"
+            ]
+        ]
+    },
+    {
+        "id": "e77e04c5.577d7",
+        "type": "ui_gauge",
+        "z": "698a39d1.69e2b8",
+        "name": "Gauge rate errors",
+        "group": "640866fc.b2dfa",
+        "order": 0,
+        "width": "4",
+        "height": "5",
+        "gtype": "gage",
+        "title": "Nombre d'erreurs/minute",
+        "label": "erreurs",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 750,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "ac74be8c.a4c04",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get errors rate InfluxDB",
+        "query": "SELECT COUNT(error) FROM errors WHERE time > now() - 1m",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 230,
+        "y": 580,
+        "wires": [
+            [
+                "26411672.18ad4a"
+            ]
+        ]
+    },
+    {
+        "id": "26411672.18ad4a",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format rate gauge",
+        "func": "if (msg.payload.length === 0) {\n    msg.payload = 0;\n} else {\n    msg.payload = msg.payload[0].count\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 580,
+        "wires": [
+            [
+                "e77e04c5.577d7"
+            ]
+        ]
+    },
+    {
+        "id": "6ad24f48.db32d",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format rate gauge",
+        "func": "if (msg.payload.length === 0) {\n    msg.payload = 0;\n} else {\n    msg.payload = msg.payload[0].count\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 420,
+        "wires": [
+            [
+                "afc7e07.fb70b2"
+            ]
+        ]
+    },
+    {
+        "id": "da38a15a.0b7eb",
+        "type": "ui_dropdown",
+        "z": "698a39d1.69e2b8",
+        "name": "Dropdown devices",
+        "label": "Appareils",
+        "tooltip": "Liste des appareils enregistrés dans TTN",
+        "place": "Choisir un appareil",
+        "group": "748d4408.a71804",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 790,
+        "y": 1180,
+        "wires": [
+            [
+                "f95ec03c.34502"
+            ]
+        ]
+    },
+    {
+        "id": "57659772.b5b8f",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get devices InfluxDB",
+        "query": " SELECT dev_id FROM devices",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 220,
+        "y": 1180,
+        "wires": [
+            [
+                "73cfbb31.4af38c"
+            ]
+        ]
+    },
+    {
+        "id": "f10f8b1a.fbc81",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "devices_dashboard",
+        "links": [
+            "1931b2a9.d851dd"
+        ],
+        "x": 55,
+        "y": 1180,
+        "wires": [
+            [
+                "57659772.b5b8f"
+            ]
+        ]
+    },
+    {
+        "id": "73cfbb31.4af38c",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format devices dropdown",
+        "func": "msg.options = msg.payload.map((data) => data.dev_id);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 1180,
+        "wires": [
+            [
+                "da38a15a.0b7eb"
+            ]
+        ]
+    },
+    {
+        "id": "8f14271e.3fe9c8",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get received messages",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 510,
+        "y": 1300,
+        "wires": [
+            [
+                "4197710b.48ffe"
+            ]
+        ]
+    },
+    {
+        "id": "71a2548d.af3e04",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format received query",
+        "func": "return {\n    query: `SELECT * FROM messages WHERE receiver_dev_id='${msg.payload}'`\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 220,
+        "y": 1300,
+        "wires": [
+            [
+                "8f14271e.3fe9c8"
+            ]
+        ]
+    },
+    {
+        "id": "30cd5b63.3b2f1c",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format sent query",
+        "func": "return {\n    query: `SELECT * FROM messages WHERE sender_dev_id='${msg.payload}'`\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 210,
+        "y": 1360,
+        "wires": [
+            [
+                "160594ab.67643b"
+            ]
+        ]
+    },
+    {
+        "id": "160594ab.67643b",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get sent messages",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 490,
+        "y": 1360,
+        "wires": [
+            [
+                "4197710b.48ffe"
+            ]
+        ]
+    },
+    {
+        "id": "4197710b.48ffe",
+        "type": "join",
+        "z": "698a39d1.69e2b8",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 750,
+        "y": 1340,
+        "wires": [
+            [
+                "3b36e0e1.3d0878"
+            ]
+        ]
+    },
+    {
+        "id": "d66a336b.604e5",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "connections_dashboard",
+        "links": [
+            "d031ac50.8a073"
+        ],
+        "x": 55,
+        "y": 740,
+        "wires": [
+            [
+                "a5921143.128b88"
+            ]
+        ]
+    },
+    {
+        "id": "a5921143.128b88",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get devices/day InfluxDB",
+        "query": " SELECT COUNT(dev_id) FROM devices WHERE time > now() - 30d GROUP BY time(1d)",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 230,
+        "y": 740,
+        "wires": [
+            [
+                "67a62c89.aa2e44"
+            ]
+        ]
+    },
+    {
+        "id": "67a62c89.aa2e44",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format devices chart",
+        "func": "msg.payload = [{\n    series: [\"Appareils\"],\n    data: [\n        msg.payload.map((data) => {\n            return {\n                x: data.time,\n                y: data.count\n            };\n        })\n    ]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 520,
+        "y": 740,
+        "wires": [
+            [
+                "df7fc93f.738458"
+            ]
+        ]
+    },
+    {
+        "id": "df7fc93f.738458",
+        "type": "ui_chart",
+        "z": "698a39d1.69e2b8",
+        "name": "Devices/day chart",
+        "group": "8e030c59.6f0da8",
+        "order": 1,
+        "width": "12",
+        "height": "4",
+        "label": "Appareils/jour sur le dernier mois",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "D/M",
+        "interpolate": "linear",
+        "nodata": "Aucune donnée",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "31",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 790,
+        "y": 740,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "80036665.54bf48",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get messages InfluxDB",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 510,
+        "y": 1420,
+        "wires": [
+            [
+                "4b07179b.9a64b8"
+            ]
+        ]
+    },
+    {
+        "id": "4b07179b.9a64b8",
+        "type": "ui_template",
+        "z": "698a39d1.69e2b8",
+        "group": "748d4408.a71804",
+        "name": "Messages on dashboard",
+        "order": 3,
+        "width": "12",
+        "height": "10",
+        "format": "<h2 ng-show=\"msg.showMessages\">\n    Messages de {{msg.dev_id}}\n</h2>\n\n<div ng-repeat=\"message in msg.payload\">\n    <div class=\"message-block\" ng-class=\"(message.receiver_dev_id === msg.dev_id) ? 'message-receiver': 'message-sender'\">\n        <div class=\"message-header\">\n           <span class=\"message-user\"> {{message.sender_dev_id}} à {{message.receiver_dev_id}}</span>\n           <br/>\n           <span class=\"message-time\">({{message.time | date:'dd/MM/yyyy à HH:mm:ss'}})</span>\n        </div>\n       \n        <div class=\"message-text\" ng-bind-html=\"message.text\"></div>\n    </div>\n</div>\n\n\n<style type=\"text/css\">\n    .nr-dashboard-theme {\n        text-align: center;\n    }\n\n    .message-block {\n        background-color: #ccc;\n        border-radius: 9px;\n        padding: 10px;\n        color: #3b3737;\n        margin: 5px;\n        width: 45%;\n        text-align: left;\n    }\n    \n    .message-block.message-sender {\n        position: relative;\n        left: 50%;\n    }\n    \n    .message-block.message-receiver {\n        position: relative;\n        left: 0;\n    }\n    \n    .message-header {\n        margin-bottom: 5px;\n    }\n    \n    .message-text {\n        font-size: 14px;\n        text-align: right;\n    }\n    \n    .message-user {\n        font-weight: bold;\n    }\n    \n    .message-time {\n        font-size: 12px;\n        font-style: italic;\n    }\n</style>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "templateScope": "local",
+        "x": 870,
+        "y": 1420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "df6a08.052655f8",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "uplink_messages_dashboard",
+        "links": [
+            "f95ec03c.34502"
+        ],
+        "x": 55,
+        "y": 1420,
+        "wires": [
+            [
+                "6a1b7321.c19b8c"
+            ]
+        ]
+    },
+    {
+        "id": "f95ec03c.34502",
+        "type": "link out",
+        "z": "698a39d1.69e2b8",
+        "name": "selected_device",
+        "links": [
+            "8afa476f.7c1578",
+            "2392dd89.4380e2",
+            "df6a08.052655f8"
+        ],
+        "x": 990,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "2392dd89.4380e2",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "device_to_get_received_messages",
+        "links": [
+            "f95ec03c.34502"
+        ],
+        "x": 55,
+        "y": 1300,
+        "wires": [
+            [
+                "71a2548d.af3e04"
+            ]
+        ]
+    },
+    {
+        "id": "8afa476f.7c1578",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "device_to_get_sent_messages",
+        "links": [
+            "f95ec03c.34502"
+        ],
+        "x": 55,
+        "y": 1360,
+        "wires": [
+            [
+                "30cd5b63.3b2f1c"
+            ]
+        ]
+    },
+    {
+        "id": "6a1b7321.c19b8c",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format all messages query",
+        "func": "return {\n    query: `SELECT * FROM messages WHERE sender_dev_id='${msg.payload}' OR receiver_dev_id='${msg.payload}'`,\n    dev_id: msg.payload,\n    showMessages: true\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 240,
+        "y": 1420,
+        "wires": [
+            [
+                "80036665.54bf48"
+            ]
+        ]
+    },
+    {
+        "id": "b6667566.eae2f8",
+        "type": "ui_ui_control",
+        "z": "698a39d1.69e2b8",
+        "name": "",
+        "x": 100,
+        "y": 80,
+        "wires": [
+            [
+                "1d6839cb.5c36be"
+            ]
+        ]
+    },
+    {
+        "id": "78b38213.e1b374",
+        "type": "comment",
+        "z": "698a39d1.69e2b8",
+        "name": "Trigger dashboard updates",
+        "info": "",
+        "x": 160,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "1931b2a9.d851dd",
+        "type": "link out",
+        "z": "698a39d1.69e2b8",
+        "name": "on_browser_connect",
+        "links": [
+            "f10f8b1a.fbc81",
+            "71fecf4d.47cb28",
+            "11dc1ad2.8c4e95"
+        ],
+        "x": 455,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "a81fdd69.754e58",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "on_ttn_uplink",
+        "links": [
+            "d6abf3ab.c50c6"
+        ],
+        "x": 135,
+        "y": 140,
+        "wires": [
+            [
+                "d031ac50.8a073"
+            ]
+        ]
+    },
+    {
+        "id": "d031ac50.8a073",
+        "type": "link out",
+        "z": "698a39d1.69e2b8",
+        "name": "update_dashboard",
+        "links": [
+            "58c5bba3.ddb554",
+            "f1da3dbb.d04058",
+            "d3985f78.4dc6b",
+            "d66a336b.604e5",
+            "603e817d.fbdbd8"
+        ],
+        "x": 455,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "58c5bba3.ddb554",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "errors_dashboard",
+        "links": [
+            "d031ac50.8a073"
+        ],
+        "x": 55,
+        "y": 500,
+        "wires": [
+            [
+                "7eb4cc1.716ae34",
+                "926235dc.0d7d6",
+                "ac74be8c.a4c04"
+            ]
+        ]
+    },
+    {
+        "id": "1d6839cb.5c36be",
+        "type": "switch",
+        "z": "698a39d1.69e2b8",
+        "name": "If connect",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "connect",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 280,
+        "y": 80,
+        "wires": [
+            [
+                "1931b2a9.d851dd",
+                "d031ac50.8a073"
+            ]
+        ]
+    },
+    {
+        "id": "71fecf4d.47cb28",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "uplink_messages_dashboard",
+        "links": [
+            "1931b2a9.d851dd"
+        ],
+        "x": 415,
+        "y": 1480,
+        "wires": [
+            [
+                "8e3c2992.d9568"
+            ]
+        ]
+    },
+    {
+        "id": "8e3c2992.d9568",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Hide messages",
+        "func": "return {\n    payload: [],\n    showMessages: false\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 560,
+        "y": 1480,
+        "wires": [
+            [
+                "4b07179b.9a64b8"
+            ]
+        ]
+    },
+    {
+        "id": "d2f8d49f.e66",
+        "type": "ui_chart",
+        "z": "698a39d1.69e2b8",
+        "name": "Repartition sent/received",
+        "group": "748d4408.a71804",
+        "order": 2,
+        "width": "12",
+        "height": "4",
+        "label": "Répartition messages envoyés/reçus",
+        "chartType": "pie",
+        "legend": "true",
+        "xformat": "D/M",
+        "interpolate": "linear",
+        "nodata": "Aucune donnée",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "31",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1210,
+        "y": 1340,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "3b36e0e1.3d0878",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format pie chart",
+        "func": "msg.payload = [{\n    series: [\"Messages\"],\n    data: [msg.payload.map((data) => data.length)],\n    labels: [\"Envoyés\", \"Reçus\"]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 950,
+        "y": 1340,
+        "wires": [
+            [
+                "d2f8d49f.e66"
+            ]
+        ]
+    },
+    {
+        "id": "11dc1ad2.8c4e95",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "uplink_messages_dashboard",
+        "links": [
+            "1931b2a9.d851dd"
+        ],
+        "x": 935,
+        "y": 1480,
+        "wires": [
+            [
+                "c532468d.3b50c8"
+            ]
+        ]
+    },
+    {
+        "id": "c532468d.3b50c8",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Hide pie chart",
+        "func": "return {\n    payload: []\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1060,
+        "y": 1480,
+        "wires": [
+            [
+                "d2f8d49f.e66"
+            ]
+        ]
+    },
+    {
+        "id": "a9fc1b2c.1698e",
+        "type": "comment",
+        "z": "698a39d1.69e2b8",
+        "name": "Display messages/device",
+        "info": "",
+        "x": 150,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "f2596d36.1adfc8",
+        "type": "link out",
+        "z": "4c0d676e.9c66d",
+        "name": "on_activation",
+        "links": [
+            "f0a75364.dce79"
+        ],
+        "x": 355,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "6e5f92a3.466d94",
+        "type": "link out",
+        "z": "4c0d676e.9c66d",
+        "name": "on_registration",
+        "links": [],
+        "x": 355,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "59682fe2.a9f088",
+        "type": "link out",
+        "z": "4c0d676e.9c66d",
+        "name": "on_removal",
+        "links": [],
+        "x": 355,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "c467e505.65b23",
+        "type": "link out",
+        "z": "5f8dec2c.0c4754",
+        "name": "on_error",
+        "links": [
+            "5e9c0d9.8c70c74"
+        ],
+        "x": 175,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f0a75364.dce79",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "on_activation",
+        "links": [
+            "f2596d36.1adfc8"
+        ],
+        "x": 135,
+        "y": 180,
+        "wires": [
+            [
+                "d031ac50.8a073"
+            ]
+        ]
+    },
+    {
+        "id": "820f7465.f3c098",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "on_registration",
+        "links": [
+            "d6abf3ab.c50c6"
+        ],
+        "x": 135,
+        "y": 220,
+        "wires": [
+            [
+                "d031ac50.8a073"
+            ]
+        ]
+    },
+    {
+        "id": "7bacfdf0.6a47d4",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "on_removal",
+        "links": [
+            "d6abf3ab.c50c6"
+        ],
+        "x": 135,
+        "y": 260,
+        "wires": [
+            [
+                "d031ac50.8a073"
+            ]
+        ]
+    },
+    {
+        "id": "5e9c0d9.8c70c74",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "on_error",
+        "links": [
+            "c467e505.65b23"
+        ],
+        "x": 135,
+        "y": 300,
+        "wires": [
+            [
+                "d031ac50.8a073"
+            ]
+        ]
+    },
+    {
+        "id": "603e817d.fbdbd8",
+        "type": "link in",
+        "z": "698a39d1.69e2b8",
+        "name": "errors_dashboard",
+        "links": [
+            "d031ac50.8a073"
+        ],
+        "x": 55,
+        "y": 980,
+        "wires": [
+            [
+                "9eb44c50.c9083"
+            ]
+        ]
+    },
+    {
+        "id": "9eb44c50.c9083",
+        "type": "influxdb in",
+        "z": "698a39d1.69e2b8",
+        "influxdb": "8dc7fb3a.0f1048",
+        "name": "Get messages/day InfluxDB",
+        "query": " SELECT COUNT(text) FROM messages WHERE time > now() - 30d GROUP BY time(1d)",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 240,
+        "y": 980,
+        "wires": [
+            [
+                "8332478f.72151"
+            ]
+        ]
+    },
+    {
+        "id": "8332478f.72151",
+        "type": "function",
+        "z": "698a39d1.69e2b8",
+        "name": "Format messages chart",
+        "func": "msg.payload = [{\n    series: [\"Messages\"],\n    data: [\n        msg.payload.map((data) => {\n            return {\n                x: data.time,\n                y: data.count\n            };\n        })\n    ]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 530,
+        "y": 980,
+        "wires": [
+            [
+                "ba2a7ccf.6c48e"
+            ]
+        ]
+    },
+    {
+        "id": "ba2a7ccf.6c48e",
+        "type": "ui_chart",
+        "z": "698a39d1.69e2b8",
+        "name": "Messages/day chart",
+        "group": "8e030c59.6f0da8",
+        "order": 3,
+        "width": "12",
+        "height": "4",
+        "label": "Messages/jour sur le dernier mois",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "D/M",
+        "interpolate": "linear",
+        "nodata": "Aucune donnée",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "31",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 780,
+        "y": 980,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "7d36489d.18b9a",
+        "type": "debug",
+        "z": "fd842509.77039",
+        "name": "Downlinks",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 380,
+        "y": 760,
+        "wires": []
     }
 ]
