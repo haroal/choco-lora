@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { ActivityIndicator, Alert, View, StatusBar, PermissionsAndroid } from 'react-native'
-import ReduxNavigation from '../Navigation/ReduxNavigation'
 import { connect } from 'react-redux'
+import ReduxNavigation from '../Navigation/ReduxNavigation'
 import BluetoothActions, { BluetoothSelectors } from '../Redux/BluetoothRedux'
 import { LoadingSelectors } from '../Redux/LoadingRedux'
 

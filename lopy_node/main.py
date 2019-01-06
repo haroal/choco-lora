@@ -33,8 +33,12 @@ char_receive = service.characteristic(uuid=char_receive_uuid, properties=Bluetoo
 char_lora_ready = service.characteristic(uuid=char_lora_ready_uuid, properties=Bluetooth.PROP_NOTIFY|Bluetooth.PROP_READ, value=b'\x00')
 
 def test(*arg):
-    char_receive.value(b'test')
-    print(b'test')
+    msg = b'test'
+    type = b'\x01'
+    sender_id = b'lopy-node '
+    data = type + sender_id + msg
+    char_receive.value(MAGIC_CODE + struct.pack('>B', len(data)) + data)
+    print(b'Test sent')
 
 alarme_test = None
 def bt_connection_cb(bt_o):
@@ -118,7 +122,7 @@ def read_lora():
         if len(rliste) != 0:
             rx_data = s.recv(256)
             print("recu {}".format(rx_data))
-            rx_data = MAGIC_CODE + bytes([len(rx_data)]) + rx_data
+            rx_data = MAGIC_CODE + struct.pack('>B', len(rx_data)) + rx_data
             print("to send to phone = {}".format(rx_data))
             while len(rx_data) > TAILLE_MSG_BLE:
                 char_receive.value(rx_data[:20])

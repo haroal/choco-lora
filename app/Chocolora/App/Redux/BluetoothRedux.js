@@ -131,11 +131,13 @@ export const write = (state) =>
   state.merge({ bluetoothState: BluetoothState.Writing })
 
 export const onWriteDone = (state) =>
-  state.merge({ bluetoothState: BluetoothState.Idle })
+  state.merge({ bluetoothState: BluetoothState.Connected })
 
 export const onError = (state, { error }) => {
   console.log('ERROR', error)
-  return state.merge({ bluetoothState: BluetoothState.Idle, errors: [...state.errors, error] })
+  return state.merge({
+    bluetoothState: state.connectedDevice !== null ? BluetoothState.Connected : BluetoothState.Idle,
+    errors: [...state.errors, error] })
 }
 
 export const removeError = (state) =>

@@ -11,7 +11,7 @@ class MessagesScreen extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Message à',
+      title: 'À',
       headerStyle: {
         backgroundColor: '#f4511e',
       },
@@ -22,13 +22,13 @@ class MessagesScreen extends Component {
       headerRight: (
         <TextInput
           style={styles.destinationTextInput}
+          editable={navigation.getParam('contactId') === null}
           onSubmitEditing={navigation.getParam('onContactIdSubmitted')}
           onChangeText={navigation.getParam('onContactIdChanged')}
         />
-      ),
+      )
     }
   }
-
 
   constructor (props) {
     super(props)
@@ -43,25 +43,38 @@ class MessagesScreen extends Component {
     this.onContactIdSubmitted = this.onContactIdSubmitted.bind(this)
 
     this.props.navigation.setParams({
+      contactId: this.props.contactId,
       onContactIdChanged: this.onContactIdChanged,
       onContactIdSubmitted: this.onContactIdSubmitted
     })
   }
 
-  onContactIdChanged (text) {
-      this.setState({
-        contactIdText: text
+  componentDidUpdate (prevProps) {
+    if (prevProps.contactId !== this.props.contactId) {
+      console.log(this.props.contactId)
+
+      this.props.navigation.setParams({
+        contactId: this.props.contactId
       })
+    }
+  }
+
+  onContactIdChanged (text) {
+    this.setState({
+      contactIdText: text
+    })
   }
 
   onContactIdSubmitted () {
-      this.props.setContactId(this.state.contactIdText)
+    this.props.setContactId(this.state.contactIdText)
   }
 
   sendMessage () {
     this.props.sendingMessage(this.state.messageText)
-    //this.props.writeBluetooth(this.state.messageText)
-    console.log(this.state.messageText)
+    this.props.writeBluetooth(this.state.messageText)
+    this.setState({
+      messageText: ''
+    })
   }
 
   renderItem({ item }){
@@ -81,16 +94,19 @@ class MessagesScreen extends Component {
   }
 
   render () {
+    if (this.props.contactId === null) {
+      return null
+    }
+
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <FlatList
-          data={this.props.previousMessages}
+          data={this.props.previousMessages[this.props.contactId] || []}
           keyExtractor={(item, index) => index.toString()}
           renderItem={this.renderItem}
         />
         <TextInput
           name='message'
-          editable={this.props.contactId !== null}
           style={styles.messageTextInput}
           onChangeText={(text) => this.setState({ messageText:text })}
           onSubmitEditing={this.sendMessage}
@@ -99,8 +115,6 @@ class MessagesScreen extends Component {
     )
   }
 }
-
-// TODO: get messages for contact id
 
 const mapStateToProps = (state) => {
   return {

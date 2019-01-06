@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-android-location-enabler')
     compile project(':react-native-vector-icons')
     compile project(':react-native-ble-plx')
     compile project(':react-native-gesture-handler')

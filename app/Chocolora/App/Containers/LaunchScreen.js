@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
-import { Button, Text, ScrollView, View } from 'react-native'
-import connect from 'react-redux/es/connect/connect'
+import { Text, ScrollView, View } from 'react-native'
+import { connect } from 'react-redux'
 import { State as ControllerState } from 'react-native-ble-plx'
-import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
+import MessagesActions from '../Redux/MessagesRedux';
 
 class LaunchScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -55,10 +57,16 @@ class LaunchScreen extends Component {
   }
 
   async onConnectPressed () {
-    if (this.props.controllerState !== ControllerState.PoweredOn) {
-      await this.props.bleManager.enable()
+    try {
+      await RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({ interval: 10000, fastInterval: 5000 })
+
+      if (this.props.controllerState !== ControllerState.PoweredOn) {
+        await this.props.bleManager.enable()
+      }
+      this.props.navigation.push('ConnectionScreen')
+    } catch (err) {
+      this.props.onError(err)
     }
-    this.props.navigation.push('ConnectionScreen')
   }
 
   onDisconnectPressed () {
@@ -97,11 +105,11 @@ class LaunchScreen extends Component {
   }
 
   newMessage(){
+    this.props.setContactId(null)
     this.props.navigation.push('MessagesScreen')
   }
 
   render () {
-
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
         <View>
@@ -127,7 +135,9 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  disconnect: () => dispatch(BluetoothActions.disconnect())
+  disconnect: () => dispatch(BluetoothActions.disconnect()),
+  setContactId: (contactId) => dispatch(MessagesActions.setContactId(contactId)),
+  onError: (error) => dispatch(BluetoothActions.onError(error))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LaunchScreen)

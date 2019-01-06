@@ -63,11 +63,12 @@ export function * scanDevices () {
 export function * onDisconnectedTask (channel) {
   try {
     const { error } = yield take(channel)
+
+    yield put(BluetoothActions.onDisconnected())
+
     if (error) {
       throw error
     }
-
-    yield put(BluetoothActions.onDisconnected())
   } catch (error) {
     yield put(BluetoothActions.onError(error))
   }
@@ -137,7 +138,7 @@ export function * disconnectDevice () {
 }
 
 /** ************ Write Message ************* **/
-export function * writeMessage ({message}) {
+export function * writeMessage ({ message }) {
   yield put(LoadingActions.onLoad(LoadingId.Writing))
 
   try {
@@ -148,7 +149,10 @@ export function * writeMessage ({message}) {
       throw new Error('Impossible to write if not connected')
     }
 
-    yield apply(bleManager, bleManager.writeCharacteristicWithResponseForDevice,
+    // TODO: test writing to characteristic
+    // TODO: format message before sending it
+    console.log('WRITING MESSAGE', message)
+    yield apply(bleManager, bleManager.writeCharacteristicWithoutResponseForDevice,
       [connectedDevice.id, BluetoothConfig.serviceUUID, BluetoothConfig.sendCharacteristicUUID, Buffer.from(message).toString('base64')])
 
     yield put(BluetoothActions.onWriteDone())
@@ -168,17 +172,20 @@ export function * receiveNotificationTask (channel) {
         throw error
       }
 
-      let magicCode = value.readUInt16BE(0)
-      console.log("Magic Code: ", magicCode)
-      let length = value.readUInt16BE(2)
-      console.log("Length: ", length)
-      let type = value.readUInt8(4)
-      console.log("Type: ", type)
-      let senderId = value.toString('utf8', 5, 15)
-      console.log("Sender Id: ", senderId)
-      let message = value.toString('utf8', 15)
-      console.log("Message: ", message)
-      yield put(MessagesActions.receiveMessageAction(senderId, message))
+      try {
+        let magicCode = value.readUInt16BE(0)
+        let length = value.readUInt8(2)
+        let type = value.readUInt8(3)
+        let senderId = value.toString('utf8', 4, 14).trim()
+        let message = value.toString('utf8', 14)
+        // console.log('Message reçu de', senderId, ':', message)
+
+        // TODO: reassemble long messages
+
+        yield put(MessagesActions.receiveMessageAction(senderId, message))
+      } catch (err) {
+        console.log('Bad formatted message: ', value)
+      }
     }
   } catch (error) {
     yield put(BluetoothActions.onError(error))
@@ -193,6 +200,8 @@ export function * receiveNotification (action) {
   try {
     const { device } = action
 
+    // TODO: register sent event too
+
     const notificationChannel = eventChannel(emit => {
       device.monitorCharacteristicForService(
         BluetoothConfig.serviceUUID,
@@ -201,7 +210,7 @@ export function * receiveNotification (action) {
           if (error) {
             // emit({ error, value: null })
           } else {
-            console.log(Buffer.from(characteristic.value, 'base64'))
+            // console.log(Buffer.from(characteristic.value, 'base64'))
             emit({ error: null, value: Buffer.from(characteristic.value, 'base64') })
           }
         }

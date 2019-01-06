@@ -5,8 +5,8 @@ import Immutable from 'seamless-immutable'
 
 const { Types, Creators } = createActions({
   sendMessageAction: ['message'],
-  receiveMessageAction: ['sender_id', 'message'],
-  setContactId: ['contact_id']
+  receiveMessageAction: ['senderId', 'message'],
+  setContactId: ['contactId']
 })
 
 export const MessagesTypes = Types
@@ -27,41 +27,41 @@ export const INITIAL_STATE = Immutable({
 /* ------------- Selectors ------------- */
 
 export const MessagesSelectors = {
-  getPreviousMessages: state => state.messages.previousMessages,
-  getCurrentContactId: state => state.messages.currentContactId
+  getPreviousMessages: (state) => state.messages.previousMessages,
+  getCurrentContactId: (state) => state.messages.currentContactId
 }
 
 /* ------------- Reducers ------------- */
 
-export const addMessage = (state, { contact_id, message, type }) => {
+export const addMessage = (state, { contactId, message, type }) => {
   let conversation;
-  let message = {type, message};
+  let messageData = { type, message };
 
-  if (state.previousMessages[contact_id] !== undefined) {
+  if (state.previousMessages[contactId] !== undefined) {
     conversation = [
-      ...state.previousMessages[contact_id],
-      message
+      ...state.previousMessages[contactId],
+      messageData
     ]
   } else {
-    conversation = [message]
+    conversation = [messageData]
   }
 
   return state.merge({
     previousMessages: {
       ...state.previousMessages,
-      [contact_id]: conversation
+      [contactId]: conversation
     }
   })
 }
 
 export const addSentMessage = (state, { message }) =>
-  addMessage(state, { device_id: state.currentContactId, message, type: MessageType.SENT })
+  addMessage(state, { contactId: state.currentContactId, message, type: MessageType.SENT })
 
-export const addReceivedMessage = (state, { sender_id, message }) =>
-  addMessage(state, { device_id: sender_id, message, type: MessageType.SENT })
+export const addReceivedMessage = (state, { senderId, message }) =>
+  addMessage(state, { contactId: senderId, message, type: MessageType.RECEIVED })
 
-export const setContactId = (state, { contact_id }) =>
-  state.merge({ currentContactId: contact_id })
+export const setContactId = (state, { contactId }) =>
+  state.merge({ currentContactId: contactId })
 
 /* ------------- Hookup Reducers To Types ------------- */
 
