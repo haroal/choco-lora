@@ -52,23 +52,37 @@ export const addDestination = (state) =>
   state.merge({
     destinations : [
       ...state.destinations,
-      "test test"
-    ]
+      "?"
+    ],
+    destinationSelected: [state.destinations.length, "?"]
   })
 
 export const changeDestinationName = (state, {destination}) => {
-  return state.merge({
-    destinations: [
-      ...state.destinations.slice(0,state.destinations.length-2),
-      destination
-    ]
-  })
+  if (state.destinations.length=1){
+    return state.merge({
+      destinations: [
+        ...state.destinations.slice(0,state.destinations.length - 1),
+        destination
+      ],
+      destinationSelected: [state.destinations.length - 1, destination]
+    })
+  }else{
+    return state.merge({
+      destinations: [
+        ...state.destinations.slice(0,state.destinations.length),
+        destination
+      ],
+      destinationSelected: [state.destinations.length - 1, destination]
+    })
+  }
 }
 
-export const selectDestination = (state, { index }) =>
-  state.merge({
-    destinationSelected : [index, state.destinations[index]]
+export const selectDestination = (state, { index }) => {
+  console.log("redux : "+index)
+  return state.merge({
+    destinationSelected: [index, state.destinations[index]]
   })
+}
 
 /* ------------- Hookup Reducers To Types ------------- */
 

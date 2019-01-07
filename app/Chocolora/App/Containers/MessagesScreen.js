@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, TextInput, View, FlatList } from 'react-native'
-import { connect } from 'react-redux'
+import { Button, Text, ScrollView, View, FlatList, TextInput } from 'react-native'
+import connect from 'react-redux/es/connect/connect'
+import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
 import MessagesActions, { MessagesSelectors, MessagesState } from '../Redux/MessagesRedux'
-import BluetoothActions from '../Redux/BluetoothRedux'
 
 // Styles
 import styles from './Styles/MessagesScreenStyle'
@@ -11,19 +11,14 @@ class MessagesScreen extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Message à',
+      title: navigation.getParam('selectedDestination'),
       headerStyle: {
         backgroundColor: '#f4511e',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
         fontWeight: 'bold',
-      },
-      headerRight: (
-        <View>
-        {navigation.getParam('renderNameInput')}
-        </View>
-      ),
+      }
     }
   }
 
@@ -36,17 +31,22 @@ class MessagesScreen extends Component {
       messageText:"",
       nameText:""
     }
+    //this.props.navigation.state.params.title = "test"
     this.props.navigation.setParams({
-      renderNameInput: this.renderNameInput()
+      selectedDestination: "Message à "+String(this.props.selectedDestination[1]),
     })
   }
 
   renderNameInput(){
     return (
       <TextInput
-      style={styles.destinationTextInput}
-      onChangeText={(text) => this.setState({nameText:text})}
-      onSubmitEditing={this.setDestinationName()}
+      //style={styles.destinationTextInput}
+      onChangeText={(text) => {
+        this.setState({nameText : text})
+      }}
+      onSubmitEditing={() => {
+        this.setDestinationName()
+      }}
       //value={this.state.text}
       />
     )
@@ -55,12 +55,12 @@ class MessagesScreen extends Component {
   sendMessage(){
     this.props.sendingMessage(this.state.messageText)
     //this.props.writeBluetooth(this.state.messageText)
-    console.log(this.state.messageText)
     //this.setState([name]: value);
   }
 
   setDestinationName(){
-    this.props.setDestinationNameValidate(this.props.nameText)
+    this.props.setDestinationNameValidate(this.state.nameText)
+    console.log(this.props.destinations)
   }
 
   renderItem({item}){
@@ -76,28 +76,55 @@ class MessagesScreen extends Component {
   }
 
   render () {
-
-    return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <FlatList
-          data={this.props.previousMessages}
-          keyExtractor={(item, index) => index}
-          renderItem={this.renderItem}
-        />
-        <TextInput
-          name='message'
-          style={styles.messageTextInput}
-          onChangeText={(text) => this.setState({messageText:text})}
-          onSubmitEditing={this.sendMessage}
-        />
-      </ScrollView>
-    )
+    //console.log("render message screen : "+this.props.selectedDestination)
+    if(this.props.selectedDestination[1]==="?"){
+      return (
+        <ScrollView contentContainerStyle={styles.container}>
+          {this.renderNameInput()}
+          <Text style={{color:"black"}}>
+            {this.props.selectedDestination[1]}
+          </Text>
+          <FlatList
+            data={this.props.previousMessages}
+            keyExtractor={(item, index) => index}
+            renderItem={this.renderItem}
+          />
+          <TextInput
+            name='message'
+            style={styles.messageTextInput}
+            onChangeText={(text) => this.setState({messageText:text})}
+            onSubmitEditing={this.sendMessage}
+          />
+        </ScrollView>
+      )
+    }else{
+      return (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={{color:"black"}}>
+            {this.props.selectedDestination[1]}
+          </Text>
+          <FlatList
+            data={this.props.previousMessages}
+            keyExtractor={(item, index) => index}
+            renderItem={this.renderItem}
+          />
+          <TextInput
+            name='message'
+            style={styles.messageTextInput}
+            onChangeText={(text) => this.setState({messageText:text})}
+            onSubmitEditing={this.sendMessage}
+          />
+        </ScrollView>
+      )
+    }
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    previousMessages: MessagesSelectors.getPreviousMessages(state)
+    previousMessages: MessagesSelectors.getPreviousMessages(state),
+    selectedDestination: MessagesSelectors.getDestinationSelected(state),
+    destinations: MessagesSelectors.getDestinations(state)
   }
 }
 

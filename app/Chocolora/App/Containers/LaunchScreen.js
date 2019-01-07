@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Text, ScrollView, View } from 'react-native'
+import { Button, Text, ScrollView, View, FlatList } from 'react-native'
 import connect from 'react-redux/es/connect/connect'
 import { State as ControllerState } from 'react-native-ble-plx'
 import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
@@ -38,6 +38,7 @@ class LaunchScreen extends Component {
     this.onConnectPressed = this.onConnectPressed.bind(this)
     this.onDisconnectPressed = this.onDisconnectPressed.bind(this)
     this.newMessage = this.newMessage.bind(this)
+    this.seeMessagesFromDestination = this.seeMessagesFromDestination.bind(this)
 
     this.props.navigation.setParams({
       bluetoothState: this.props.bluetoothState,
@@ -58,13 +59,31 @@ class LaunchScreen extends Component {
   }
 
   newMessage(){
-    this.props.navigation.push('MessagesScreen')
     this.props.addDestination()
-    console.log(this.props.destinations)
+    this.props.navigation.push('MessagesScreen')
+  }
+
+  seeMessagesFromDestination(index){
+    console.log("seeMessagesFromDestination : "+index)
+    this.props.navigation.push('MessagesScreen')
+    this.props.selectDestination(index)
+  }
+
+  renderItem(index){
+    console.log("renderItem : "+index)
+    return(
+      <View><Icon.Button
+        name={'plus'}
+        size={20}
+        onPress={() => this.seeMessagesFromDestination(index)}
+      >
+        {this.props.destinations[index]}
+      </Icon.Button>
+      </View>
+    )
   }
 
   render () {
-
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
       <View
@@ -76,6 +95,11 @@ class LaunchScreen extends Component {
           iconStyle={styles.btButtonIconAddMessage}
           onPress={this.newMessage}
         >New message</Icon.Button>
+        <FlatList
+          data={this.props.destinations}
+          keyExtractor={({index}) => (index)}
+          renderItem={({index}) => this.renderItem(index)}
+        />
       </View>
         <View>
           <Text style={styles.authors}> By Alexis A., Thomas L. and Chloé V. </Text>
@@ -96,6 +120,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   disconnect: () => dispatch(BluetoothActions.disconnect()),
   addDestination: () => dispatch(MessagesActions.addDestinationAction()),
+  selectDestination: (destination) => dispatch(MessagesActions.selectDestinationAction(destination))
 
 })
 
