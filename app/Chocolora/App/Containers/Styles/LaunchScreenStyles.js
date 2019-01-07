@@ -15,14 +15,15 @@ export default StyleSheet.create({
   centered: {
     alignItems: 'center'
   },
-  btConnectButton: {
-    width: 150
+  vMessages:{
+    marginTop:10,
+    marginBottom:10,
   },
-  btDisconnectButton: {
-    width: 170
+  btButtonIconAddMessage: {
+    marginRight: 5
   },
-  btButtonIcon: {
-    marginRight: 20
+  btButtonIconBluetooth: {
+    marginRight: 0,
   },
   AppTitleStyle: {
     fontSize: 30,
@@ -61,5 +62,14 @@ export default StyleSheet.create({
     minWidth: 200,
     borderWidth: 1,
     borderColor: 'black'
+  },
+  headerLaunch: {
+    flex: 0.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  centerLaunch: {
+    flex: 6.5,
+    alignItems: 'center',
   }
 })

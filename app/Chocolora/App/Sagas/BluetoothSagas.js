@@ -4,6 +4,7 @@ import { Buffer } from 'buffer'
 import BluetoothConfig from '../Config/BluetoothConfig'
 import BluetoothActions, { BluetoothSelectors, BluetoothTypes } from '../Redux/BluetoothRedux'
 import { State as ControllerState } from 'react-native-ble-plx'
+import MessagesActions from '../Redux/MessagesRedux'
 import LoadingActions, { LoadingId } from '../Redux/LoadingRedux'
 
 /** ************ Scan ************* **/
@@ -79,6 +80,7 @@ export function * connectDevice (action) {
     connectedDevice = yield apply(connectedDevice, connectedDevice.discoverAllServicesAndCharacteristics)
 
     yield put(BluetoothActions.onConnected(connectedDevice))
+    console.log(connectedDevice)
 
     onConnectedCallback(connectedDevice)
   } catch (error) {
@@ -111,6 +113,29 @@ export function * disconnectDevice () {
   }
 }
 
+/** ************ Write Message ************* **/
+export function * writeMessage ({message}) {
+  yield put(LoadingActions.onLoad(LoadingId.Writing))
+
+  try {
+    const bleManager = yield select(BluetoothSelectors.getManager)
+    const connectedDevice = yield select(BluetoothSelectors.getConnectedDevice)
+
+    if (connectedDevice === null) {
+      throw new Error('Impossible to write if not connected')
+    }
+
+    yield apply(bleManager, bleManager.writeCharacteristicWithResponseForDevice,
+      [connectedDevice.id, BluetoothConfig.serviceUUID, BluetoothConfig.sendCharacteristicUUID, Buffer.from(message).toString('base64')])
+
+    yield put(BluetoothActions.onWriteDone())
+  } catch (error) {
+    yield put(BluetoothActions.onError(error))
+  } finally {
+    yield put(LoadingActions.onStopLoading(LoadingId.Writing))
+  }
+}
+
 /** ****** Subscribe to notification ******* **/
 export function * receiveNotificationTask (channel) {
   try {
@@ -120,7 +145,7 @@ export function * receiveNotificationTask (channel) {
         throw error
       }
 
-      yield put(BluetoothActions.onValueReceived(value))
+      yield put(MessagesActions.receiveMessageAction(value))
     }
   } catch (error) {
     yield put(BluetoothActions.onError(error))
@@ -143,9 +168,7 @@ export function * receiveNotification (action) {
           if (error) {
             // emit({ error, value: null })
           } else {
-            let buffer = Buffer.from(characteristic.value, 'base64')
-            let valueRead = buffer.readUIntLE(0, buffer.length)
-            emit({ error: null, value: valueRead })
+            emit({ error: null, value: Buffer.from(characteristic.value, 'base64').toString('utf8') })
           }
         }
       )
