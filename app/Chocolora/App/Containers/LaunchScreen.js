@@ -112,7 +112,9 @@ class LaunchScreen extends Component {
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
         <View style={styles.vMessages}>
-          <Text>{this.props.connectedDevice !== null ? 'Connecté à ' + this.props.connectedDevice.name : null}</Text>
+          <Text style={styles.connectedDeviceText}>
+            {this.props.connectedDevice !== null ? 'Connecté à ' + this.props.connectedDevice.name : null}
+          </Text>
 
           <FlatList
             data={this.props.contacts}

@@ -29,6 +29,15 @@ export default StyleSheet.create({
     marginTop: 2.5,
     marginBottom:2.5,
   },
+  connectedDeviceText: {
+    color: '#3c1200',
+    textAlign: 'center',
+    margin: 5,
+    backgroundColor: '#e3fcff',
+    borderRadius: 5,
+    height: 30,
+    lineHeight: 30
+  },
   btItemList: {
     borderWidth: 1,
     borderColor:'#00b779',
