@@ -34,5 +34,45 @@ export default StyleSheet.create({
     borderWidth: 1,
     backgroundColor:'white',
     width:'90%'
-  }
+  },
+  vMessageReceived:{
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start'
+  },
+  txtMessageReceived:{
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    // flex: 1,
+    //width: 50,
+    color: 'white',
+    backgroundColor: '#692000',
+    maxWidth: '70%',
+    marginLeft: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    padding: 5,
+    borderRadius: 3
+  },
+  vMessageSent:{
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
+  },
+  txtMessageSent:{
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    color: 'white',
+    backgroundColor: '#00b779',
+    maxWidth: '70%',
+    marginRight: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    padding: 5,
+    borderRadius: 3
+  },
 })

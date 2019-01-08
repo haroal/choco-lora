@@ -112,9 +112,11 @@ class LaunchScreen extends Component {
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
         <View style={styles.vMessages}>
-          <Text style={styles.connectedDeviceText}>
-            {this.props.connectedDevice !== null ? 'Connecté à ' + this.props.connectedDevice.name : null}
-          </Text>
+          {this.props.connectedDevice !== null &&
+            <Text style={styles.connectedDeviceText}>
+               Connecté à {this.props.connectedDevice.name}
+            </Text>
+          }
 
           <FlatList
             data={this.props.contacts}
@@ -124,14 +126,16 @@ class LaunchScreen extends Component {
         </View>
 
         <View>
-          <Text style={styles.authors}> By Alexis A., Thomas L. and Chloé V. </Text>
+          <Text style={styles.authors}> Par Alexis A., Thomas L. et Chloé V. </Text>
         </View>
 
-        <ActionButton
-          buttonColor="#41c5e1"
-          onPress={this.newMessage}
-          renderIcon={(active) => <Icon name={'plus'} size={20} color={'white'}/>}
-        />
+        {this.props.connectedDevice !== null &&
+          <ActionButton
+            buttonColor="#41c5e1"
+            onPress={this.newMessage}
+            renderIcon={(active) => <Icon name={'plus'} size={20} color={'white'}/>}
+          />
+        }
       </ScrollView>
     )
   }

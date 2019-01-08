@@ -89,14 +89,14 @@ class MessagesScreen extends Component {
   renderItem({ item }){
     if (item.type === MessageType.RECEIVED){
       return(
-        <View>
-          <Text style={{color:"black"}}>{item.message}</Text>
+        <View style={styles.vMessageReceived}>
+          <Text style={styles.txtMessageReceived}>{item.message}</Text>
         </View>
       )
     } else {
       return(
-        <View>
-          <Text style={{color:"red"}}>{item.message}</Text>
+        <View style={styles.vMessageSent}>
+          <Text style={styles.txtMessageSent}>{item.message}</Text>
         </View>
       )
     }
@@ -110,6 +110,7 @@ class MessagesScreen extends Component {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <FlatList
+          style={{width: '100%'}}
           data={this.props.previousMessages[this.props.contactId] || []}
           keyExtractor={(item, index) => index.toString()}
           renderItem={this.renderItem}
