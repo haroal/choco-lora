@@ -18,7 +18,7 @@ export default StyleSheet.create({
   vMessages:{
     display : 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     width: '90%'
   },
   vNewMessage: {
@@ -34,8 +34,8 @@ export default StyleSheet.create({
     borderColor:'#00b779',
     color:'#00b779',
   },
-  btButtonIconAddMessage: {
-    marginRight: 5
+  btNewMessage: {
+    color: 'white'
   },
   btButtonIconBluetoothC: {
     marginRight: 0,
