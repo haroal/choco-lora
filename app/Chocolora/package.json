@@ -29,6 +29,7 @@
     "ramda": "^0.25.0",
     "react": "16.6.1",
     "react-native": "0.57.7",
+    "react-native-action-button": "^2.8.5",
     "react-native-android-location-enabler": "^1.0.8",
     "react-native-ble-plx": "^1.0.1",
     "react-native-config": "^0.10.0",

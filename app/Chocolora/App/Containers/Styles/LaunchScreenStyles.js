@@ -19,8 +19,8 @@ export default StyleSheet.create({
     marginTop:10,
     marginBottom:10,
   },
-  btButtonIconAddMessage: {
-    marginRight: 5
+  btNewMessage: {
+    color: 'white'
   },
   btButtonIconBluetooth: {
     marginRight: 0,

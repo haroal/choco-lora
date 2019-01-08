@@ -3,9 +3,12 @@ import { Button, Text, ScrollView, View, FlatList } from 'react-native'
 import { State as ControllerState } from 'react-native-ble-plx'
 import { connect } from 'react-redux'
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler'
+import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
 import MessagesActions, { MessagesSelectors } from '../Redux/MessagesRedux'
+
+// TODO: tester avec uuid plus court pour avoir la place pour le nom
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
@@ -90,13 +93,7 @@ class LaunchScreen extends Component {
   renderItem({ item }){
     return(
       <View>
-        <Icon.Button
-          name={'plus'}
-          size={20}
-          onPress={() => this.seeMessagesFromDestination(item)}
-        >
-          {item}
-        </Icon.Button>
+        <Button title={item} onPress={() => this.seeMessagesFromDestination(item)} />
       </View>
     )
   }
@@ -104,17 +101,9 @@ class LaunchScreen extends Component {
   render () {
     return (
       <ScrollView contentContainerStyle={styles.mainContainer}>
-        <View
-          style={styles.vMessages}>
-          <Icon.Button
-            name={'plus'}
-            size={20}
-            backgroundColor= '#00b779'
-            iconStyle={styles.btButtonIconAddMessage}
-            onPress={this.newMessage}
-          >
-            Nouveau message
-          </Icon.Button>
+        <Text>{this.props.connectedDevice !== null ? 'Connecté à ' + this.props.connectedDevice.name : null}</Text>
+
+        <View style={styles.vMessages}>
 
           <FlatList
             data={this.props.contacts}
@@ -126,6 +115,12 @@ class LaunchScreen extends Component {
         <View>
           <Text style={styles.authors}> By Alexis A., Thomas L. and Chloé V. </Text>
         </View>
+
+        <ActionButton
+          buttonColor="#41c5e1"
+          onPress={this.newMessage}
+          renderIcon={(active) => <Icon name={'plus'} size={20} color={'white'}/>}
+        />
       </ScrollView>
     )
   }

@@ -6,7 +6,8 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   sendMessageAction: ['message'],
   receiveMessageAction: ['senderId', 'message'],
-  setContactId: ['contactId']
+  setContactId: ['contactId'],
+  clearMessages: null
 })
 
 export const MessagesTypes = Types
@@ -64,10 +65,14 @@ export const addReceivedMessage = (state, { senderId, message }) =>
 export const setContactId = (state, { contactId }) =>
   state.merge({ currentContactId: contactId })
 
+export const clearMessages = (state) =>
+  state.merge({ previousMessages: {} })
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.SEND_MESSAGE_ACTION]: addSentMessage,
   [Types.RECEIVE_MESSAGE_ACTION]: addReceivedMessage,
-  [Types.SET_CONTACT_ID]: setContactId
+  [Types.SET_CONTACT_ID]: setContactId,
+  [Types.CLEAR_MESSAGES]: clearMessages
 })

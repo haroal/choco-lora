@@ -65,6 +65,7 @@ export function * onDisconnectedTask (channel) {
     const { error } = yield take(channel)
 
     yield put(BluetoothActions.onDisconnected())
+    yield put(MessagesActions.clearMessages())
 
     if (error) {
       throw error
@@ -159,17 +160,21 @@ export function * writeMessage ({ message }) {
       throw new Error('Receiver name is too long (> 10 characters)')
     }
 
-    // TODO: test writing to characteristic
-    // TODO: format message before sending it
-    // const type = Buffer.from([0x02]);
-    // const sender = Buffer.alloc(10);
-    // sender.write(contactId, 0, contactId.length, "utf8")
-    // let data = Buffer.from(message, 0, )
-    // Buffer.concat([type, sender, message])
+    const type = Buffer.from([0x02])
+    const sender = Buffer.alloc(10)
+    sender.write(contactId, 0, contactId.length, 'utf8')
+    const messageBytes = Buffer.from(message, 'utf8')
+    const payload = Buffer.concat([type, sender, messageBytes])
 
-    console.log('WRITING MESSAGE', message)
+    const header = Buffer.alloc(3)
+    header.writeUInt16BE(0xCAFE, 0)
+    header.writeUInt8(payload.length, 2)
+
+    const data = Buffer.concat([header, payload])
+
+    console.log('WRITING MESSAGE', message, data)
     yield apply(bleManager, bleManager.writeCharacteristicWithoutResponseForDevice,
-      [connectedDevice.id, BluetoothConfig.serviceUUID, BluetoothConfig.sendCharacteristicUUID, Buffer.from(message).toString('base64')])
+      [connectedDevice.id, BluetoothConfig.serviceUUID, BluetoothConfig.sendCharacteristicUUID, data.toString('base64')])
 
     yield put(BluetoothActions.onWriteDone())
   } catch (error) {

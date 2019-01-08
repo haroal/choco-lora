@@ -6,6 +6,12 @@ import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/B
 import styles from './Styles/ConnectionScreenStyle'
 
 class ConnectionScreen extends Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Appareils disponibles'
+    }
+  }
+
   constructor (props) {
     super(props)
 
@@ -65,10 +71,6 @@ class ConnectionScreen extends Component {
   render () {
     return (
       <View>
-        <Text style={styles.scanTitle}>
-          Appareils disponibles
-        </Text>
-
         <FlatList
           data={this.props.scannedDevices}
           keyExtractor={(item) => item.id}
