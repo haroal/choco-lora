@@ -27,8 +27,8 @@ class LaunchScreen extends Component {
             name={'bluetooth'}
             size={20}
             onPress={navigation.getParam('bluetoothState') === BluetoothState.Connected ? navigation.getParam('onDisconnectPressed') : navigation.getParam('onConnectPressed')}
-            backgroundColor={navigation.getParam('bluetoothState') === BluetoothState.Connected ? "blue" : "grey"}
-            iconStyle={styles.btButtonIconBluetooth}
+            backgroundColor={'#41c5e1'}
+            iconStyle={navigation.getParam('bluetoothState') === BluetoothState.Connected ? styles.btButtonIconBluetoothC : styles.btButtonIconBluetoothD}
           />
         </View>
       ),
@@ -89,11 +89,15 @@ class LaunchScreen extends Component {
 
   renderItem({ item }){
     return(
-      <View>
+      <View style={styles.vItemList}>
         <Icon.Button
-          name={'plus'}
-          size={20}
+          name={'user'}
+          size={30}
+          backgroundColor= 'white'
           onPress={() => this.seeMessagesFromDestination(item)}
+          style={styles.btItemList}
+          iconStyle={{color: '#00b779'}}
+          color="#00b779"
         >
           {item}
         </Icon.Button>
@@ -106,15 +110,17 @@ class LaunchScreen extends Component {
       <ScrollView contentContainerStyle={styles.mainContainer}>
         <View
           style={styles.vMessages}>
-          <Icon.Button
-            name={'plus'}
-            size={20}
-            backgroundColor= '#00b779'
-            iconStyle={styles.btButtonIconAddMessage}
-            onPress={this.newMessage}
-          >
-            Nouveau message
-          </Icon.Button>
+          <View style={styles.vNewMessage}>
+            <Icon.Button
+              name={'plus'}
+              size={20}
+              backgroundColor= '#00b779'
+              iconStyle={styles.btButtonIconAddMessage}
+              onPress={this.newMessage}
+            >
+              Nouveau message
+            </Icon.Button>
+          </View>
 
           <FlatList
             data={this.props.contacts}

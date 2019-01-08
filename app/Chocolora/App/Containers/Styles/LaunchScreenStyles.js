@@ -16,14 +16,34 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   vMessages:{
+    display : 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    width: '90%'
+  },
+  vNewMessage: {
     marginTop:10,
-    marginBottom:10,
+    marginBottom:7.5,
+  },
+  vItemList: {
+    marginTop: 2.5,
+    marginBottom:2.5,
+  },
+  btItemList: {
+    borderWidth: 1,
+    borderColor:'#00b779',
+    color:'#00b779',
   },
   btButtonIconAddMessage: {
     marginRight: 5
   },
-  btButtonIconBluetooth: {
+  btButtonIconBluetoothC: {
     marginRight: 0,
+    color: 'white'
+  },
+  btButtonIconBluetoothD: {
+    marginRight: 0,
+    color: 'grey'
   },
   AppTitleStyle: {
     fontSize: 30,
@@ -38,6 +58,7 @@ export default StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: 'center',
+    flexDirection: 'column',
     justifyContent: 'space-between'
   },
   digitStyle: {

@@ -13,20 +13,27 @@ class MessagesScreen extends Component {
     return {
       title: 'À',
       headerStyle: {
-        backgroundColor: '#f4511e',
+        backgroundColor: '#41c5e1',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
         fontWeight: 'bold',
       },
-      headerRight: (
-        <TextInput
-          style={styles.destinationTextInput}
-          value={navigation.getParam('contactIdText')}
-          editable={navigation.getParam('contactId') === null}
-          onSubmitEditing={navigation.getParam('onContactIdSubmitted')}
-          onChangeText={navigation.getParam('onContactIdChanged')}
-        />
+      headerRight: navigation.getParam('contactId') === null ? (
+        <View>
+          <TextInput
+            style={styles.destinationTextInput}
+            value={navigation.getParam('contactIdText')}
+            //editable={navigation.getParam('contactId') === null}
+            onSubmitEditing={navigation.getParam('onContactIdSubmitted')}
+            onChangeText={navigation.getParam('onContactIdChanged')}
+
+          />
+        </View>
+      ) : (
+        <Text style={styles.destinationTextInputSelected}>
+          {navigation.getParam('contactId')}
+        </Text>
       )
     }
   }

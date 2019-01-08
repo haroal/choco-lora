@@ -59,3 +59,7 @@ buck-out/
 # Misc
 #
 .env
+
+
+#prez
+prez/

@@ -9,11 +9,22 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   destinationTextInput:{
-    height: 40,
     borderWidth: 0,
     backgroundColor:'white',
     width:180,
-    marginRight:20
+    marginRight:20,
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: 'black'
+  },
+  destinationTextInputSelected:{
+    borderWidth: 0,
+    backgroundColor:'#41c5e1',
+    width:180,
+    marginRight:20,
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: 'white'
   },
   destinationText: {
 
