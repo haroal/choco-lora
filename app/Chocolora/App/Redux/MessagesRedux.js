@@ -5,10 +5,8 @@ import Immutable from 'seamless-immutable'
 
 const { Types, Creators } = createActions({
   sendMessageAction: ['message'],
-  receiveMessageAction: ['message'],
-  addDestinationAction: null,
-  changeDestinationNameAction: ['destination'],
-  selectDestinationAction: ['index'],
+  receiveMessageAction: ['senderId', 'message'],
+  setContactId: ['contactId']
 })
 
 export const MessagesTypes = Types
@@ -16,80 +14,60 @@ export default Creators
 
 /* ------------- Initial State ------------- */
 
+export const MessageType = {
+  RECEIVED: '0',
+  SENT: '1'
+}
+
 export const INITIAL_STATE = Immutable({
-  previousMessages: [],
-  destinationSelected: [],
-  destinations: []
+  currentContactId: null,
+  previousMessages: {}
 })
 
 /* ------------- Selectors ------------- */
 
 export const MessagesSelectors = {
   getPreviousMessages: state => state.messages.previousMessages,
-  getDestinationSelected: state => state.messages.destinationSelected,
-  getDestinations: state => state.messages.destinations,
+  getContacts: state => Object.keys(state.messages.previousMessages),
+  getCurrentContactId: (state) => state.messages.currentContactId
 }
 
 /* ------------- Reducers ------------- */
 
-export const addSentMessage = (state, { message }) =>
-  state.merge({
-    previousMessages : [
-      ...state.previousMessages,
-      [1 , state.destinationSelected[0], message]
+export const addMessage = (state, { contactId, message, type }) => {
+  let conversation;
+  let messageData = { type, message };
+
+  if (state.previousMessages[contactId] !== undefined) {
+    conversation = [
+      ...state.previousMessages[contactId],
+      messageData
     ]
-  })
-
-export const addReceivedMessage = (state, { message }) =>
-  state.merge({
-    previousMessages : [
-      ...state.previousMessages,
-      [0 , state.destinationSelected[0], message]
-    ]
-  })
-
-export const addDestination = (state) =>
-  state.merge({
-    destinations : [
-      ...state.destinations,
-      "?"
-    ],
-    destinationSelected: [state.destinations.length, "?"]
-  })
-
-export const changeDestinationName = (state, {destination}) => {
-  if (state.destinations.length=1){
-    return state.merge({
-      destinations: [
-        ...state.destinations.slice(0,state.destinations.length - 1),
-        destination
-      ],
-      destinationSelected: [state.destinations.length - 1, destination]
-    })
-  }else{
-    return state.merge({
-      destinations: [
-        ...state.destinations.slice(0,state.destinations.length),
-        destination
-      ],
-      destinationSelected: [state.destinations.length - 1, destination]
-    })
+  } else {
+    conversation = [messageData]
   }
-}
 
-export const selectDestination = (state, { index }) => {
-  console.log("redux : "+index)
   return state.merge({
-    destinationSelected: [index, state.destinations[index]]
+    previousMessages: {
+      ...state.previousMessages,
+      [contactId]: conversation
+    }
   })
 }
+
+export const addSentMessage = (state, { message }) =>
+  addMessage(state, { contactId: state.currentContactId, message, type: MessageType.SENT })
+
+export const addReceivedMessage = (state, { senderId, message }) =>
+  addMessage(state, { contactId: senderId, message, type: MessageType.RECEIVED })
+
+export const setContactId = (state, { contactId }) =>
+  state.merge({ currentContactId: contactId })
 
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.SEND_MESSAGE_ACTION]: addSentMessage,
   [Types.RECEIVE_MESSAGE_ACTION]: addReceivedMessage,
-  [Types.ADD_DESTINATION_ACTION]: addDestination,
-  [Types.CHANGE_DESTINATION_NAME_ACTION]: changeDestinationName,
-  [Types.SELECT_DESTINATION_ACTION]: selectDestination
+  [Types.SET_CONTACT_ID]: setContactId
 })

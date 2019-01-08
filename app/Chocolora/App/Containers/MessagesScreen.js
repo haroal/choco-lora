@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Button, Text, ScrollView, View, FlatList, TextInput } from 'react-native'
-import connect from 'react-redux/es/connect/connect'
-import BluetoothActions, { BluetoothSelectors, BluetoothState } from '../Redux/BluetoothRedux'
-import MessagesActions, { MessagesSelectors, MessagesState } from '../Redux/MessagesRedux'
+import { Text, TextInput, ScrollView, View, FlatList  } from 'react-native'
+import { connect } from 'react-redux'
+import BluetoothActions from '../Redux/BluetoothRedux'
+import MessagesActions, { MessagesSelectors, MessageType } from '../Redux/MessagesRedux'
 
 // Styles
 import styles from './Styles/MessagesScreenStyle'
@@ -11,120 +11,118 @@ class MessagesScreen extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('selectedDestination'),
+      title: 'À',
       headerStyle: {
         backgroundColor: '#f4511e',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
         fontWeight: 'bold',
-      }
+      },
+      headerRight: (
+        <TextInput
+          style={styles.destinationTextInput}
+          value={navigation.getParam('contactIdText')}
+          editable={navigation.getParam('contactId') === null}
+          onSubmitEditing={navigation.getParam('onContactIdSubmitted')}
+          onChangeText={navigation.getParam('onContactIdChanged')}
+        />
+      )
     }
   }
-
 
   constructor (props) {
     super(props)
-    this.sendMessage = this.sendMessage.bind(this)
-    this.setDestinationName = this.setDestinationName.bind(this)
+
     this.state = {
-      messageText:"",
-      nameText:""
+      messageText: "",
+      contactIdText: this.props.contactId
     }
-    //this.props.navigation.state.params.title = "test"
+
+    this.sendMessage = this.sendMessage.bind(this)
+    this.onContactIdChanged = this.onContactIdChanged.bind(this)
+    this.onContactIdSubmitted = this.onContactIdSubmitted.bind(this)
+
     this.props.navigation.setParams({
-      selectedDestination: "Message à "+String(this.props.selectedDestination[1]),
+      contactIdText: this.state.contactIdText,
+      contactId: this.props.contactId,
+      onContactIdChanged: this.onContactIdChanged,
+      onContactIdSubmitted: this.onContactIdSubmitted
     })
   }
 
-  renderNameInput(){
-    return (
-      <TextInput
-      //style={styles.destinationTextInput}
-      onChangeText={(text) => {
-        this.setState({nameText : text})
-      }}
-      onSubmitEditing={() => {
-        this.setDestinationName()
-      }}
-      //value={this.state.text}
-      />
-    )
+  componentDidUpdate (prevProps) {
+    if (prevProps.contactId !== this.props.contactId) {
+      console.log(this.props.contactId)
+
+      this.props.navigation.setParams({
+        contactId: this.props.contactId
+      })
+    }
   }
 
-  sendMessage(){
+  onContactIdChanged (text) {
+    this.setState({
+      contactIdText: text
+    })
+  }
+
+  onContactIdSubmitted () {
+    this.props.setContactId(this.state.contactIdText)
+  }
+
+  sendMessage () {
     this.props.sendingMessage(this.state.messageText)
-    //this.props.writeBluetooth(this.state.messageText)
-    //this.setState([name]: value);
+    this.props.writeBluetooth(this.state.messageText)
+    this.setState({
+      messageText: ''
+    })
   }
 
-  setDestinationName(){
-    this.props.setDestinationNameValidate(this.state.nameText)
-    console.log(this.props.destinations)
-  }
-
-  renderItem({item}){
-    if (item[0]===1){
+  renderItem({ item }){
+    if (item.type === MessageType.RECEIVED){
       return(
         <View>
-          <Text style={{color:"black"}}>{item[2]}</Text>
+          <Text style={{color:"black"}}>{item.message}</Text>
         </View>
       )
-    }else{
-
+    } else {
+      return(
+        <View>
+          <Text style={{color:"red"}}>{item.message}</Text>
+        </View>
+      )
     }
   }
 
   render () {
-    //console.log("render message screen : "+this.props.selectedDestination)
-    if(this.props.selectedDestination[1]==="?"){
-      return (
-        <ScrollView contentContainerStyle={styles.container}>
-          {this.renderNameInput()}
-          <Text style={{color:"black"}}>
-            {this.props.selectedDestination[1]}
-          </Text>
-          <FlatList
-            data={this.props.previousMessages}
-            keyExtractor={(item, index) => index}
-            renderItem={this.renderItem}
-          />
-          <TextInput
-            name='message'
-            style={styles.messageTextInput}
-            onChangeText={(text) => this.setState({messageText:text})}
-            onSubmitEditing={this.sendMessage}
-          />
-        </ScrollView>
-      )
-    }else{
-      return (
-        <ScrollView contentContainerStyle={styles.container}>
-          <Text style={{color:"black"}}>
-            {this.props.selectedDestination[1]}
-          </Text>
-          <FlatList
-            data={this.props.previousMessages}
-            keyExtractor={(item, index) => index}
-            renderItem={this.renderItem}
-          />
-          <TextInput
-            name='message'
-            style={styles.messageTextInput}
-            onChangeText={(text) => this.setState({messageText:text})}
-            onSubmitEditing={this.sendMessage}
-          />
-        </ScrollView>
-      )
+    if (this.props.contactId === null) {
+      return null
     }
+
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        <FlatList
+          data={this.props.previousMessages[this.props.contactId] || []}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={this.renderItem}
+        />
+        <TextInput
+          name='message'
+          style={styles.messageTextInput}
+          value={this.state.messageText}
+          onChangeText={(text) => this.setState({messageText: text})}
+          onSubmitEditing={this.sendMessage}
+        />
+      </ScrollView>
+    )
   }
 }
 
 const mapStateToProps = (state) => {
   return {
     previousMessages: MessagesSelectors.getPreviousMessages(state),
-    selectedDestination: MessagesSelectors.getDestinationSelected(state),
-    destinations: MessagesSelectors.getDestinations(state)
+    contactId: MessagesSelectors.getCurrentContactId(state)
   }
 }
 
@@ -132,7 +130,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     sendingMessage: (message) => dispatch(MessagesActions.sendMessageAction(message)),
     writeBluetooth: (message) => dispatch(BluetoothActions.write(message)),
-    setDestinationNameValidate: (destination) => dispatch(MessagesActions.changeDestinationNameAction(destination))
+    setContactId: (contactId) => dispatch(MessagesActions.setContactId(contactId))
   }
 }
 

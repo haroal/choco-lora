@@ -20,7 +20,8 @@ const { Types, Creators } = createActions({
   subscribeNotification: ['device'],
   write: ['message'],
   onWriteDone: null,
-  onError: ['error']
+  onError: ['error'],
+  dismissError: null
 })
 
 export const BluetoothTypes = Types
@@ -46,14 +47,15 @@ export const INITIAL_STATE = Immutable({
   connectedDevice: null,
   bluetoothState: BluetoothState.Idle,
   controllerState: ControllerState.Unknown,
-  error: null
+  errors: []
 })
 
 /* ------------- Selectors ------------- */
 
 export const BluetoothSelectors = {
   getManager: (state) => bleManager,
-  getError: (state) => state.bluetooth.error,
+  getError: (state) => state.bluetooth.errors[0],
+  getErrors: (state) => state.bluetooth.errors,
   getBluetoothState: state => state.bluetooth.bluetoothState,
   getControllerState: state => state.bluetooth.controllerState,
   getScannedDevices: state => state.bluetooth.scannedDevices,
@@ -129,12 +131,17 @@ export const write = (state) =>
   state.merge({ bluetoothState: BluetoothState.Writing })
 
 export const onWriteDone = (state) =>
-  state.merge({ bluetoothState: BluetoothState.Idle })
+  state.merge({ bluetoothState: BluetoothState.Connected })
 
 export const onError = (state, { error }) => {
   console.log('ERROR', error)
-  return state.merge({ bluetoothState: BluetoothState.Idle, error: error })
+  return state.merge({
+    bluetoothState: state.connectedDevice !== null ? BluetoothState.Connected : BluetoothState.Idle,
+    errors: [...state.errors, error] })
 }
+
+export const removeError = (state) =>
+  state.merge({ errors: state.errors.slice(1) })
 
 /* ------------- Hookup Reducers To Types ------------- */
 
@@ -153,5 +160,6 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.ON_DISCONNECTED]: onDisconnected,
   [Types.WRITE]: write,
   [Types.ON_WRITE_DONE]: onWriteDone,
-  [Types.ON_ERROR]: onError
+  [Types.ON_ERROR]: onError,
+  [Types.DISMISS_ERROR]: removeError
 })

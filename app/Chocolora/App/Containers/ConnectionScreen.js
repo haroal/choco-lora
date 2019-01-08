@@ -13,7 +13,7 @@ class ConnectionScreen extends Component {
     this.onDeviceFoundPressed = this.onDeviceFoundPressed.bind(this)
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     this.props.startScan()
   }
 

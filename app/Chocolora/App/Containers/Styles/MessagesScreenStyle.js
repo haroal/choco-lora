@@ -15,6 +15,9 @@ export default StyleSheet.create({
     width:180,
     marginRight:20
   },
+  destinationText: {
+
+  },
   messageTextInput:{
     height: 40,
     borderWidth: 1,
