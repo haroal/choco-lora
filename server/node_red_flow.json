@@ -666,7 +666,7 @@
         "func": "return {\n    payload: [\n        {\n            error: msg.error || 'Erreur inconnue'\n        },\n        {\n            sender_dev_id: msg.dev_id,\n            receiver_dev_id: msg.receiver_dev_id || null\n        }\n    ]\n};\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 240,
+        "x": 260,
         "y": 140,
         "wires": [
             [
@@ -697,7 +697,7 @@
         "measurement": "errors",
         "precision": "",
         "retentionPolicy": "",
-        "x": 470,
+        "x": 490,
         "y": 140,
         "wires": []
     },
